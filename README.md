@@ -33,7 +33,7 @@ PostgreSQL.
    ```bash
    cp .env.example .env.local
    ```
-   The service-role key is server-only; never expose it through a `NEXT_PUBLIC_`
+   The Supabase secret key is server-only; never expose it through a `NEXT_PUBLIC_`
    variable or commit it. Supabase Auth must be enabled for email/password.
 
 3. **Create the schema.** Run `db/schema.sql` in the Supabase SQL Editor. If
@@ -73,7 +73,7 @@ PostgreSQL.
    | `DATABASE_URL` | Supabase Transaction pooler connection string |
    | `NEXT_PUBLIC_SUPABASE_URL` | Project URL from Supabase API settings |
    | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key |
-   | `SUPABASE_SERVICE_ROLE_KEY` | Secret service-role key; server-only |
+   | `SUPABASE_SECRET_KEY` | Supabase secret key; server-only |
    | `NEXT_PUBLIC_SITE_URL` | Canonical production origin, e.g. `https://dukasmart.online` (no trailing slash) |
 
    Do not include quotation marks around the values in Vercel. Keep
