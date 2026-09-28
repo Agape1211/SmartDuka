@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { MarketingFooter } from "@/components/MarketingLayout";
 
+export const dynamic = "force-dynamic";
+
 const features = [
   ["Record sales in seconds", "Create paid or credit sales from a simple, phone-friendly cart."],
   ["Never lose track of stock", "See quantities as they change and get a clear low-stock warning."],
@@ -10,7 +12,14 @@ const features = [
 ];
 
 export default async function Home() {
-  const session = await getSession();
+  // Keep the public landing page available if its optional session check
+  // cannot reach Supabase or Postgres during an outage.
+  let session = null;
+  try {
+    session = await getSession();
+  } catch (error) {
+    console.error("Unable to check session on landing page", error);
+  }
   if (session) redirect(session.role === "OWNER" ? "/dashboard" : "/sales/new");
 
   return (
