@@ -17,8 +17,8 @@ PostgreSQL.
 - **Frontend:** Next.js 16 (App Router) + Tailwind CSS 4
 - **Backend:** Next.js Route Handlers (`src/app/api/**`)
 - **Database:** PostgreSQL (raw SQL via `pg`, see `db/schema.sql`)
-- **Auth:** email/password (bcrypt) + JWT session cookie (`jose`), role-based
-  (Owner / Employee) via `src/proxy.ts` (Next's middleware/proxy convention)
+- **Auth:** Supabase Auth email/password sessions with shop roles stored in
+   PostgreSQL and protected through `src/proxy.ts`
 
 ## Getting started
 
@@ -27,33 +27,20 @@ PostgreSQL.
    npm install
    ```
 
-2. **Start local PostgreSQL** — Docker Compose creates the `dukasmart`
-   database and applies the schema automatically on its first start. Copy the
-   environment template, choose a local database password and generate a JWT
-   secret:
+2. **Configure Supabase.** Copy the environment template and replace its
+   placeholders with the Supabase project URL, publishable key, service-role key, and
+   Transaction Pooler connection string:
    ```bash
-   cp .env.example .env
-   # edit POSTGRES_PASSWORD, DATABASE_URL (same password), and JWT_SECRET
-   npm run db:up
+   cp .env.example .env.local
    ```
+   The service-role key is server-only; never expose it through a `NEXT_PUBLIC_`
+   variable or commit it. Supabase Auth must be enabled for email/password.
 
-   Confirm that it is ready with `docker compose ps`. The database is retained
-   in the named `dukasmart_postgres_data` volume when the container stops.
-   To use an existing local Postgres server instead, set `DATABASE_URL` and
-   run `npm run db:push`.
+3. **Create the schema.** Run `db/schema.sql` in the Supabase SQL Editor. If
+   applying this auth change to an existing DukaSmart database, run
+   `db/migrations/20260928_supabase_auth.sql` instead.
 
-3. **Create the schema** (only when using an existing Postgres server; Docker
-   Compose already does this)
-   ```bash
-   npm run db:push
-   ```
-
-4. **Seed demo data** (creates one demo shop with an Owner + Employee login)
-   ```bash
-   npm run seed
-   ```
-
-5. **Run it**
+4. **Run it**
    ```bash
    npm run dev
    ```
@@ -61,12 +48,45 @@ PostgreSQL.
    create their own shop and Owner account at `/signup`; the account is signed
    in immediately and redirected to its dashboard.
 
-   **Demo logins:**
+## Deploy to Vercel + Supabase
 
-   | Role     | Email                     | Password    |
-   |----------|---------------------------|-------------|
-   | Owner    | owner@dukasmart.test      | owner123    |
-   | Employee | employee@dukasmart.test   | employee123 |
+1. **Create a Supabase project.** Enable email/password authentication. In the
+   SQL Editor, run `db/schema.sql` for a new database, or
+   `db/migrations/20260928_supabase_auth.sql` for an existing DukaSmart
+   database. Existing users can sign in with their current password once;
+   that first successful login links their profile to Supabase Auth.
+
+2. **Copy the database connection string.** In Supabase, open **Connect** and
+   select the **Transaction pooler** connection string. It is intended for
+   serverless applications and typically uses port `6543`. Keep the supplied
+   `sslmode=require` setting, and URL-encode any reserved characters in the
+   database password if you build the URL yourself. The app uses ordinary
+   parameterized queries and explicit transactions, which are supported by
+   the transaction pooler.
+
+3. **Import the repository into Vercel.** Keep the detected Next.js settings
+   and add these Project Environment Variables for Production (and Preview if
+   those deployments should use a database):
+
+   | Name | Value |
+   |------|-------|
+   | `DATABASE_URL` | Supabase Transaction pooler connection string |
+   | `NEXT_PUBLIC_SUPABASE_URL` | Project URL from Supabase API settings |
+   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Secret service-role key; server-only |
+
+   Do not include quotation marks around the values in Vercel. Keep
+   production and preview databases separate where possible. Never expose or
+   commit the service-role key.
+
+4. **Deploy.** Vercel runs `npm run build` and serves the Next.js app. The
+   production database pool is limited to one connection per serverless
+   instance to reduce connection pressure; use Supabase's Transaction pooler
+   rather than a direct database connection. After deployment, verify signup,
+   login, product creation, and a sale in the production environment.
+
+Do not run `db/seed.ts` against a production project; it creates demo accounts
+and shop data. Never put production secrets in source control.
 
 ## Project layout
 
@@ -74,7 +94,8 @@ PostgreSQL.
 db/schema.sql          Hand-written Postgres schema (tables, enums, indexes)
 db/seed.ts               Seeds demo shop, 20 products, 5 purchases, 30 sales
 src/lib/db.ts             Postgres connection pool + query() helper
-src/lib/auth.ts            Password hashing, JWT session create/verify
+src/lib/auth.ts            Supabase Auth session and shop-profile lookup
+src/lib/supabase/          Supabase SSR and server-only admin clients
 src/lib/reports.ts          Shared daily/monthly report query helpers
 src/lib/money.ts             TZS currency formatting
 src/proxy.ts               Route protection (login required, owner-only pages)
@@ -98,7 +119,8 @@ src/components/AppShell.tsx  Shared nav (sidebar on desktop, bottom nav + top
 ## Data model (`db/schema.sql`)
 
 - `shops` — one row per shop (multi-tenant-ready, though MVP only seeds one)
-- `users` — belongs to a shop, `role` is `OWNER` or `EMPLOYEE`
+- `users` — belongs to a shop, links to a Supabase Auth identity, and stores
+   the `OWNER` or `EMPLOYEE` role
 - `products` — name, category, unit, cost price, sell price, stock, low-stock
   threshold
 - `sales` / `sale_items` — a sale has one or more line items; each line item
@@ -108,14 +130,13 @@ src/components/AppShell.tsx  Shared nav (sidebar on desktop, bottom nav + top
 
 ## Production readiness
 
-The application has tenant-scoped database queries, password hashing, signed
-HTTP-only session cookies, role checks at the route and API layer, SQL
+The application has tenant-scoped database queries, Supabase Auth-managed
+HTTP-only sessions, role checks at the route and API layer, SQL
 parameterization, input validation, and baseline browser security headers.
 
 Before serving real customers, use a managed Postgres provider with backups,
-set a strong unique `JWT_SECRET`, serve the application over HTTPS, and set
-`NODE_ENV=production`. Do not seed demo data in a production database. The
-included Docker Compose setup is for local development only.
+keep the service-role key private, serve the application over HTTPS, and set
+`NODE_ENV=production`. Do not seed demo data in a production database.
 
 ## Status — MVP complete ✅
 

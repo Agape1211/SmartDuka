@@ -7,6 +7,9 @@ export const pool =
   global.__dukasmartPool ??
   new Pool({
     connectionString: process.env.DATABASE_URL,
+    max: process.env.NODE_ENV === "production" ? 1 : 10,
+    idleTimeoutMillis: 10_000,
+    connectionTimeoutMillis: 10_000,
   });
 
 if (process.env.NODE_ENV !== "production") {

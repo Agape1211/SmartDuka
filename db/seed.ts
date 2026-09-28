@@ -7,8 +7,8 @@
  * Run with: npm run seed
  */
 import "dotenv/config";
-import bcrypt from "bcryptjs";
 import { pool } from "../src/lib/db";
+import { createAdminClient } from "../src/lib/supabase/admin";
 
 type ProductSeed = {
   name: string;
@@ -61,7 +61,34 @@ function pick<T>(arr: T[]): T {
   return arr[randomInt(0, arr.length - 1)];
 }
 
+async function ensureAuthUser(admin: ReturnType<typeof createAdminClient>, email: string, password: string, name: string) {
+  const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  if (error) throw error;
+
+  const existing = data.users.find((user) => user.email?.toLowerCase() === email);
+  if (existing) {
+    const { error: updateError } = await admin.auth.admin.updateUserById(existing.id, {
+      password,
+      user_metadata: { name },
+    });
+    if (updateError) throw updateError;
+    return existing.id;
+  }
+
+  const { data: created, error: createError } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { name },
+  });
+  if (createError || !created.user) throw createError ?? new Error("Auth user was not created");
+  return created.user.id;
+}
+
 async function main() {
+  const admin = createAdminClient();
+  const ownerAuthId = await ensureAuthUser(admin, "owner@dukasmart.test", "owner123", "Amina Juma");
+  const employeeAuthId = await ensureAuthUser(admin, "employee@dukasmart.test", "employee123", "Joseph Mushi");
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -81,20 +108,26 @@ async function main() {
     );
     const shopId = shopResult.rows[0].id;
 
-    const ownerHash = await bcrypt.hash("owner123", 10);
-    const employeeHash = await bcrypt.hash("employee123", 10);
+    const { error: ownerMetadataError } = await admin.auth.admin.updateUserById(ownerAuthId, {
+      app_metadata: { role: "OWNER", shop_id: shopId },
+    });
+    if (ownerMetadataError) throw ownerMetadataError;
+    const { error: employeeMetadataError } = await admin.auth.admin.updateUserById(employeeAuthId, {
+      app_metadata: { role: "EMPLOYEE", shop_id: shopId },
+    });
+    if (employeeMetadataError) throw employeeMetadataError;
 
     const ownerResult = await client.query(
-      `INSERT INTO users (shop_id, name, email, password_hash, role)
+      `INSERT INTO users (auth_user_id, shop_id, name, email, role)
        VALUES ($1, $2, $3, $4, 'OWNER') RETURNING id`,
-      [shopId, "Amina Juma", "owner@dukasmart.test", ownerHash]
+      [ownerAuthId, shopId, "Amina Juma", "owner@dukasmart.test"]
     );
     const ownerId = ownerResult.rows[0].id;
 
     const employeeResult = await client.query(
-      `INSERT INTO users (shop_id, name, email, password_hash, role)
+      `INSERT INTO users (auth_user_id, shop_id, name, email, role)
        VALUES ($1, $2, $3, $4, 'EMPLOYEE') RETURNING id`,
-      [shopId, "Joseph Mushi", "employee@dukasmart.test", employeeHash]
+      [employeeAuthId, shopId, "Joseph Mushi", "employee@dukasmart.test"]
     );
     const employeeId = employeeResult.rows[0].id;
 
