@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { MarketingPage } from "@/components/MarketingLayout";
 
-export const metadata: Metadata = { title: "Contact us" };
+export const metadata: Metadata = { alternates: process.env.NEXT_PUBLIC_SITE_URL ? { canonical: "/contact" } : undefined, title: "Contact us" };
 const whatsappUrl = "https://wa.me/255616234063";
 
 export default function ContactPage() {

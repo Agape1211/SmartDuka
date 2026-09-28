@@ -1,9 +1,27 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { MarketingFooter } from "@/components/MarketingLayout";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: process.env.NEXT_PUBLIC_SITE_URL ? { canonical: "/" } : undefined,
+};
+
+const websiteStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "DukaSmart",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description:
+    "Sales, stock, purchase, and reporting software for Tanzanian retail shops.",
+  ...(process.env.NEXT_PUBLIC_SITE_URL
+    ? { url: process.env.NEXT_PUBLIC_SITE_URL }
+    : {}),
+};
 
 const features = [
   ["Record sales in seconds", "Create paid or credit sales from a simple, phone-friendly cart."],
@@ -24,6 +42,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f7fbfa] text-slate-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData) }} />
       <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
         <Link href="/" className="flex items-center gap-2 font-bold tracking-tight text-brand-dark" aria-label="DukaSmart home">
           <span className="grid size-9 place-items-center rounded-xl bg-brand text-lg text-white">D</span><span>DukaSmart</span>
