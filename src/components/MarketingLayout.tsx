@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { BrandAvatar } from "@/components/BrandAvatar";
 import {
-  LanguageSwitcher,
   LocalizedContent,
   useLanguage,
 } from "@/components/LanguageProvider";
@@ -28,7 +27,6 @@ export function MarketingHeader() {
         <BrandAvatar /><span>DukaSmart</span>
       </Link>
       <div className="flex items-center gap-2 sm:gap-3">
-        <LanguageSwitcher />
         <Link href="/login" className="rounded-lg px-2 py-2 text-sm font-semibold text-slate-700 hover:text-brand-dark sm:px-3">{t("Sign in")}</Link>
         <Link href="/signup" className="rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark sm:px-4">{t("Start free")}</Link>
       </div>

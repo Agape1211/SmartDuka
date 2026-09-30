@@ -10,11 +10,33 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
 } from "react";
 import { Locale, translate } from "@/lib/translations";
 
 const STORAGE_KEY = "dukasmart-language";
+const localeListeners = new Set<() => void>();
+
+function subscribeToLocale(listener: () => void) {
+  localeListeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    localeListeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
+function getStoredLocale(initialLocale: Locale, hasSavedLocale: boolean): Locale {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (saved === "en" || saved === "sw") return saved;
+  } catch {
+    // Fall back to the server-provided locale when browser storage is unavailable.
+  }
+  if (!hasSavedLocale && navigator.language.toLowerCase().startsWith("sw")) return "sw";
+  return initialLocale;
+}
+
 type LanguageContextValue = {
   locale: Locale;
   setLocale: (locale: Locale) => void;
@@ -22,31 +44,35 @@ type LanguageContextValue = {
 };
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setCurrentLocale] = useState<Locale>("en");
+export function LanguageProvider({
+  children,
+  initialLocale,
+  hasSavedLocale,
+}: {
+  children: ReactNode;
+  initialLocale: Locale;
+  hasSavedLocale: boolean;
+}) {
+  const locale = useSyncExternalStore(
+    subscribeToLocale,
+    () => getStoredLocale(initialLocale, hasSavedLocale),
+    () => initialLocale,
+  );
 
   useEffect(() => {
-    let preferred: Locale = navigator.language.toLowerCase().startsWith("sw") ? "sw" : "en";
-    try {
-      const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === "en" || saved === "sw") preferred = saved;
-    } catch {
-      // The language switch still works for this session when storage is unavailable.
-    }
-    document.documentElement.lang = preferred === "sw" ? "sw-TZ" : "en-TZ";
-    // Restore the saved browser preference after hydration to keep SSR markup deterministic.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCurrentLocale(preferred);
-  }, []);
+    document.documentElement.lang = locale === "sw" ? "sw-TZ" : "en-TZ";
+  }, [locale]);
 
   const setLocale = useCallback((nextLocale: Locale) => {
-    setCurrentLocale(nextLocale);
     document.documentElement.lang = nextLocale === "sw" ? "sw-TZ" : "en-TZ";
     try {
       window.localStorage.setItem(STORAGE_KEY, nextLocale);
     } catch {
       // Keep the selection for this session if browser storage is blocked.
     }
+    const secure = window.location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = `${STORAGE_KEY}=${nextLocale}; Max-Age=31536000; Path=/; SameSite=Lax${secure}`;
+    localeListeners.forEach((listener) => listener());
   }, []);
 
   const t = useCallback((text: string) => translate(text, locale), [locale]);

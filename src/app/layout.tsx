@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/components/LanguageProvider";
+import type { Locale } from "@/lib/translations";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
@@ -48,11 +50,16 @@ export const metadata: Metadata = {
     : {}),
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const cookieStore = await cookies();
+  const savedLocale = cookieStore.get("dukasmart-language")?.value;
+  const initialLocale: Locale = savedLocale === "sw" ? "sw" : "en";
+  const hasSavedLocale = savedLocale === "sw" || savedLocale === "en";
+
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang={initialLocale === "sw" ? "sw-TZ" : "en-TZ"} className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
-        <LanguageProvider>
+        <LanguageProvider initialLocale={initialLocale} hasSavedLocale={hasSavedLocale}>
           {children}
           <Analytics />
         </LanguageProvider>

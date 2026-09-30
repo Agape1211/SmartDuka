@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { BrandAvatar } from "@/components/BrandAvatar";
-import { LanguageSwitcher, LocalizedContent, useLanguage } from "@/components/LanguageProvider";
+import { LocalizedContent, useLanguage } from "@/components/LanguageProvider";
 import { usePathname, useRouter } from "next/navigation";
 
 type NavItem = { href: string; label: string; ownerOnly?: boolean };
@@ -50,7 +50,6 @@ export function AppShell({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
           <button
             onClick={handleLogout}
             className="text-xs bg-white/15 px-3 py-1.5 rounded-lg"
@@ -85,7 +84,6 @@ export function AppShell({
           ))}
         </nav>
         <div className="pt-4 border-t border-white/10">
-          <div className="mb-2"><LanguageSwitcher /></div>
           <p className="text-xs text-teal-100 mb-2">
             {name} · {t(role === "OWNER" ? "Owner" : "Employee")}
           </p>

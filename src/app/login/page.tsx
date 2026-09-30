@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LanguageSwitcher, LocalizedContent } from "@/components/LanguageProvider";
+import { LocalizedContent } from "@/components/LanguageProvider";
 
 function LoginForm() {
   const router = useRouter();
@@ -43,7 +43,6 @@ function LoginForm() {
     <LocalizedContent>
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="mb-4 flex justify-end"><LanguageSwitcher /></div>
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-brand-dark">DukaSmart</h1>
           <p className="text-sm text-slate-500 mt-1">Jua biashara yako</p>
