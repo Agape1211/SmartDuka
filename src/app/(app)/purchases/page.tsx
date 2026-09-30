@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { formatTZS } from "@/lib/money";
+import { LocalizedContent, useLanguage } from "@/components/LanguageProvider";
 
 type Product = { id: string; name: string; unit: string; cost_price: string; stock: number };
 type PurchaseLine = { productId: string; name: string; unit: string; unitCost: string; qty: string };
@@ -15,6 +16,7 @@ type PurchaseHistory = {
 };
 
 export default function PurchasesPage() {
+  const { locale } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [lines, setLines] = useState<PurchaseLine[]>([]);
@@ -115,6 +117,7 @@ export default function PurchasesPage() {
   }
 
   return (
+    <LocalizedContent>
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <h1 className="text-xl font-bold text-slate-800 mb-1">Purchases / restocking</h1>
       <p className="text-sm text-slate-500 mb-6">
@@ -241,7 +244,7 @@ export default function PurchasesPage() {
                 <p className="text-sm font-medium text-slate-800">
                   {h.supplier || "Unnamed supplier"}{" "}
                   <span className="text-slate-400 font-normal">
-                    · {new Date(h.created_at).toLocaleString("en-TZ")}
+                    · {new Date(h.created_at).toLocaleString(locale === "sw" ? "sw-TZ" : "en-TZ")}
                   </span>
                 </p>
                 <p className="text-xs text-slate-400 truncate">
@@ -256,5 +259,6 @@ export default function PurchasesPage() {
         </div>
       </div>
     </div>
+    </LocalizedContent>
   );
 }

@@ -4,6 +4,7 @@ import { getSession } from "@/lib/auth";
 import { getSalesReport, dayRange, monthRange } from "@/lib/reports";
 import { formatTZS } from "@/lib/money";
 import { query } from "@/lib/db";
+import { translate } from "@/lib/translations";
 
 function csvEscape(value: string) {
   if (/[",\n]/.test(value)) return `"${value.replace(/"/g, '""')}"`;
@@ -20,6 +21,8 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type") === "monthly" ? "monthly" : "daily";
   const format = searchParams.get("format") === "pdf" ? "pdf" : "csv";
+  const locale = searchParams.get("lang") === "sw" ? "sw" : "en";
+  const t = (text: string) => translate(text, locale);
 
   let label: string;
   let from: Date;
@@ -27,11 +30,11 @@ export async function GET(req: NextRequest) {
   if (type === "daily") {
     const date = searchParams.get("date") ?? new Date().toISOString().slice(0, 10);
     ({ from, to } = dayRange(date));
-    label = `Daily report — ${date}`;
+    label = `${t("Daily report")} — ${date}`;
   } else {
     const month = searchParams.get("month") ?? new Date().toISOString().slice(0, 7);
     ({ from, to } = monthRange(month));
-    label = `Monthly report — ${month}`;
+    label = `${t("Monthly report")} — ${month}`;
   }
 
   const report = await getSalesReport(session.shopId, from, to);
@@ -46,16 +49,16 @@ export async function GET(req: NextRequest) {
     const lines: string[] = [];
     lines.push(csvEscape(shop.name) + "," + csvEscape(label));
     lines.push("");
-    lines.push(["Date/Time", "Customer", "Payment", "Recorded by", "Items", "Total (TZS)"].join(","));
+    lines.push(["Date/Time", "Customer", "Payment", "Recorded by", "Items", "Total (TZS)"].map(t).join(","));
     for (const sale of report.sales) {
       const itemsStr = sale.items
         .map((i) => `${i.productName} x${i.quantity}`)
         .join("; ");
       lines.push(
         [
-          new Date(sale.created_at).toLocaleString("en-TZ"),
+          new Date(sale.created_at).toLocaleString(locale === "sw" ? "sw-TZ" : "en-TZ"),
           sale.customer_name ?? "",
-          sale.payment_status,
+          t(sale.payment_status === "PAID" ? "Paid" : "Credit"),
           sale.recorded_by_name,
           itemsStr,
           sale.total,
@@ -65,10 +68,10 @@ export async function GET(req: NextRequest) {
       );
     }
     lines.push("");
-    lines.push(`Total sales,,,,,${report.totals.saleCount}`);
-    lines.push(`Revenue (TZS),,,,,${report.totals.revenue}`);
-    lines.push(`Estimated profit (TZS),,,,,${report.totals.profit}`);
-    lines.push(`Outstanding credit (TZS),,,,,${report.totals.creditOutstanding}`);
+    lines.push(`${t("Total sales")},,,,,${report.totals.saleCount}`);
+    lines.push(`${t("Revenue (TZS)")},,,,,${report.totals.revenue}`);
+    lines.push(`${t("Estimated profit (TZS)")},,,,,${report.totals.profit}`);
+    lines.push(`${t("Outstanding credit (TZS)")},,,,,${report.totals.creditOutstanding}`);
 
     return new NextResponse(lines.join("\n"), {
       status: 200,
@@ -97,11 +100,11 @@ export async function GET(req: NextRequest) {
   doc.fontSize(10).fillColor("#0f172a");
   const colX = { date: 40, customer: 140, pay: 260, items: 320, total: 480 };
   doc.font("Helvetica-Bold");
-  doc.text("Date/Time", colX.date, doc.y, { width: 95 });
-  doc.text("Customer", colX.customer, doc.y - doc.currentLineHeight(), { width: 115 });
-  doc.text("Pay", colX.pay, doc.y - doc.currentLineHeight(), { width: 55 });
-  doc.text("Items", colX.items, doc.y - doc.currentLineHeight(), { width: 150 });
-  doc.text("Total", colX.total, doc.y - doc.currentLineHeight(), { width: 70, align: "right" });
+  doc.text(t("Date/Time"), colX.date, doc.y, { width: 95 });
+  doc.text(t("Customer"), colX.customer, doc.y - doc.currentLineHeight(), { width: 115 });
+  doc.text(t("Payment"), colX.pay, doc.y - doc.currentLineHeight(), { width: 55 });
+  doc.text(t("Items"), colX.items, doc.y - doc.currentLineHeight(), { width: 150 });
+  doc.text(t("Total"), colX.total, doc.y - doc.currentLineHeight(), { width: 70, align: "right" });
   doc.moveDown(0.3);
   doc.moveTo(40, doc.y).lineTo(555, doc.y).strokeColor("#e2e8f0").stroke();
   doc.moveDown(0.3);
@@ -115,9 +118,9 @@ export async function GET(req: NextRequest) {
     if (doc.y + rowHeight > 760) doc.addPage();
     const y = doc.y;
 
-    doc.text(new Date(sale.created_at).toLocaleString("en-TZ"), colX.date, y, { width: 95 });
+    doc.text(new Date(sale.created_at).toLocaleString(locale === "sw" ? "sw-TZ" : "en-TZ"), colX.date, y, { width: 95 });
     doc.text(sale.customer_name ?? "—", colX.customer, y, { width: 115 });
-    doc.text(sale.payment_status, colX.pay, y, { width: 55 });
+    doc.text(t(sale.payment_status === "PAID" ? "Paid" : "Credit"), colX.pay, y, { width: 55 });
     doc.text(itemsStr, colX.items, y, { width: 150 });
     doc.text(`${formatTZS(sale.total)}`, colX.total, y, { width: 70, align: "right" });
 
@@ -128,10 +131,10 @@ export async function GET(req: NextRequest) {
   doc.moveTo(40, doc.y).lineTo(555, doc.y).strokeColor("#e2e8f0").stroke();
   doc.moveDown(0.5);
   doc.font("Helvetica-Bold");
-  doc.text(`Sales recorded: ${report.totals.saleCount}`, 40, doc.y, { width: 300 });
-  doc.text(`Revenue: TZS ${formatTZS(report.totals.revenue)}`, 40, doc.y, { width: 300 });
-  doc.text(`Estimated profit: TZS ${formatTZS(report.totals.profit)}`, 40, doc.y, { width: 300 });
-  doc.text(`Outstanding credit: TZS ${formatTZS(report.totals.creditOutstanding)}`, 40, doc.y, { width: 300 });
+  doc.text(`${t("Total sales")}: ${report.totals.saleCount}`, 40, doc.y, { width: 300 });
+  doc.text(`${t("Revenue")}: TZS ${formatTZS(report.totals.revenue)}`, 40, doc.y, { width: 300 });
+  doc.text(`${t("Est. profit")}: TZS ${formatTZS(report.totals.profit)}`, 40, doc.y, { width: 300 });
+  doc.text(`${t("Outstanding credit")}: TZS ${formatTZS(report.totals.creditOutstanding)}`, 40, doc.y, { width: 300 });
 
   doc.end();
   const pdfBuffer = await done;

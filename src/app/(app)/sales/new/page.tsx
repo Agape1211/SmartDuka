@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { formatTZS } from "@/lib/money";
+import { LocalizedContent } from "@/components/LanguageProvider";
 
 type Product = {
   id: string;
@@ -119,6 +120,7 @@ export default function NewSalePage() {
   }
 
   return (
+    <LocalizedContent>
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <h1 className="text-xl font-bold text-slate-800 mb-1">Record a sale</h1>
       <p className="text-sm text-slate-500 mb-6">
@@ -268,5 +270,6 @@ export default function NewSalePage() {
         </div>
       </div>
     </div>
+    </LocalizedContent>
   );
 }

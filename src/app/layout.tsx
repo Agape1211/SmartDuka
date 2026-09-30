@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { LanguageProvider } from "@/components/LanguageProvider";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
@@ -15,10 +16,15 @@ export const metadata: Metadata = {
   applicationName: "DukaSmart",
   keywords: [
     "shop management software Tanzania",
-    "inventory management Tanzania",
-    "sales tracking for shops",
-    "stock management software",
-    "retail POS Tanzania",
+    "POS system Tanzania",
+    "point of sale software Tanzania",
+    "inventory management software Tanzania",
+    "stock management system Tanzania",
+    "sales and inventory software for small businesses",
+    "retail software Tanzania",
+    "hardware shop management software",
+    "mfumo wa mauzo Tanzania",
+    "mfumo wa kusimamia duka",
   ],
   openGraph: {
     type: "website",
@@ -37,14 +43,19 @@ export const metadata: Metadata = {
       "Manage shop sales, stock, purchases, and business reports in one simple tool built for Tanzanian retailers.",
     images: ["/opengraph-image"],
   },
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
-        {children}
-        <Analytics />
+        <LanguageProvider>
+          {children}
+          <Analytics />
+        </LanguageProvider>
       </body>
     </html>
   );

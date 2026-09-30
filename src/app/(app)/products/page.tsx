@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { formatTZS } from "@/lib/money";
+import { LocalizedContent, useLanguage } from "@/components/LanguageProvider";
 
 type Product = {
   id: string;
@@ -36,6 +37,7 @@ const emptyForm: FormState = {
 };
 
 export default function ProductsPage() {
+  const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [search, setSearch] = useState("");
@@ -120,17 +122,18 @@ export default function ProductsPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this product?")) return;
+    if (!confirm(t("Delete this product?"))) return;
     const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      alert(data.error ?? "Could not delete product");
+      alert(t(data.error ?? "Could not delete product"));
       return;
     }
     load();
   }
 
   return (
+    <LocalizedContent>
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -363,5 +366,6 @@ export default function ProductsPage() {
         </div>
       )}
     </div>
+    </LocalizedContent>
   );
 }

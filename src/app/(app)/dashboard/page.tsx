@@ -3,14 +3,15 @@
 import { useEffect, useState } from "react";
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
 } from "recharts";
 import { formatTZS } from "@/lib/money";
+import { LocalizedContent, useLanguage } from "@/components/LanguageProvider";
 
 type Summary = {
   today: { total: string; count: number };
@@ -24,6 +25,7 @@ type Summary = {
 type ChartPoint = { day: string; total: string };
 
 export default function DashboardPage() {
+  const { locale } = useLanguage();
   const [summary, setSummary] = useState<Summary | null>(null);
   const [chart, setChart] = useState<ChartPoint[]>([]);
   const [name, setName] = useState("");
@@ -41,11 +43,12 @@ export default function DashboardPage() {
   }, []);
 
   const chartData = chart.map((p) => ({
-    day: new Date(p.day).toLocaleDateString("en-TZ", { day: "2-digit", month: "short" }),
+    day: new Date(p.day).toLocaleDateString(locale === "sw" ? "sw-TZ" : "en-TZ", { day: "2-digit", month: "short" }),
     total: parseFloat(p.total),
   }));
 
   return (
+    <LocalizedContent>
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       <h1 className="text-xl font-bold text-slate-800">Karibu, {name || "…"} 👋</h1>
       <p className="text-sm text-slate-500 mt-1">Here&apos;s how the shop is doing.</p>
@@ -67,7 +70,7 @@ export default function DashboardPage() {
         <h2 className="text-sm font-semibold text-slate-700 mb-4">Sales — last 14 days</h2>
         <div className="h-56">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
+            <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#94a3b8" }} />
               <YAxis
@@ -75,9 +78,9 @@ export default function DashboardPage() {
                 tickFormatter={(v) => formatTZS(v)}
                 width={60}
               />
-              <Tooltip formatter={(v) => [`TZS ${formatTZS(Number(v) || 0)}`, "Sales"]} />
-              <Line type="monotone" dataKey="total" stroke="#0f766e" strokeWidth={2} dot={false} />
-            </LineChart>
+              <Tooltip formatter={(v) => [`TZS ${formatTZS(Number(v) || 0)}`, locale === "sw" ? "Mauzo" : "Sales"]} />
+              <Bar dataKey="total" fill="#0f766e" />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
@@ -125,6 +128,7 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
+    </LocalizedContent>
   );
 }
 

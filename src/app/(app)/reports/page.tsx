@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatTZS } from "@/lib/money";
+import { LocalizedContent, useLanguage } from "@/components/LanguageProvider";
 
 type ReportItem = { productName: string; quantity: number; unitPrice: string };
 type ReportSale = {
@@ -26,6 +27,7 @@ function monthStr() {
 }
 
 export default function ReportsPage() {
+  const { locale } = useLanguage();
   const [mode, setMode] = useState<"daily" | "monthly">("daily");
   const [date, setDate] = useState(todayStr());
   const [month, setMonth] = useState(monthStr());
@@ -52,10 +54,11 @@ export default function ReportsPage() {
       mode === "daily"
         ? `type=daily&date=${date}&format=${format}`
         : `type=monthly&month=${month}&format=${format}`;
-    return `/api/reports/export?${params}`;
+    return `/api/reports/export?${params}&lang=${locale}`;
   }
 
   return (
+    <LocalizedContent>
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <h1 className="text-xl font-bold text-slate-800 mb-1">Reports</h1>
       <p className="text-sm text-slate-500 mb-6">Daily and monthly sales, exportable as CSV or PDF.</p>
@@ -148,7 +151,7 @@ export default function ReportsPage() {
             {data?.sales.map((s) => (
               <tr key={s.id} className="border-b border-slate-100 last:border-0">
                 <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
-                  {new Date(s.created_at).toLocaleString("en-TZ", {
+                  {new Date(s.created_at).toLocaleString(locale === "sw" ? "sw-TZ" : "en-TZ", {
                     hour: "2-digit",
                     minute: "2-digit",
                     day: "2-digit",
@@ -179,6 +182,7 @@ export default function ReportsPage() {
         </table>
       </div>
     </div>
+    </LocalizedContent>
   );
 }
 

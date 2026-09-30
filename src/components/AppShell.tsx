@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { BrandAvatar } from "@/components/BrandAvatar";
+import { LanguageSwitcher, LocalizedContent, useLanguage } from "@/components/LanguageProvider";
 import { usePathname, useRouter } from "next/navigation";
 
 type NavItem = { href: string; label: string; ownerOnly?: boolean };
@@ -27,6 +28,7 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useLanguage();
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -47,12 +49,15 @@ export function AppShell({
             <p className="text-[11px] text-teal-100 leading-tight">{shopName}</p>
           </div>
         </div>
-        <button
-          onClick={handleLogout}
-          className="text-xs bg-white/15 px-3 py-1.5 rounded-lg"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <button
+            onClick={handleLogout}
+            className="text-xs bg-white/15 px-3 py-1.5 rounded-lg"
+          >
+            {t("Logout")}
+          </button>
+        </div>
       </header>
 
       {/* Sidebar (desktop) */}
@@ -75,25 +80,26 @@ export function AppShell({
                   : "hover:bg-white/10 text-teal-50"
               }`}
             >
-              {item.label}
+              {t(item.label)}
             </Link>
           ))}
         </nav>
         <div className="pt-4 border-t border-white/10">
+          <div className="mb-2"><LanguageSwitcher /></div>
           <p className="text-xs text-teal-100 mb-2">
-            {name} · {role === "OWNER" ? "Owner" : "Employee"}
+            {name} · {t(role === "OWNER" ? "Owner" : "Employee")}
           </p>
           <button
             onClick={handleLogout}
             className="text-xs bg-white/10 hover:bg-white/20 w-full text-left px-3 py-2 rounded-lg"
           >
-            Logout
+            {t("Logout")}
           </button>
         </div>
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 min-w-0 pb-20 md:pb-6">{children}</main>
+      <main className="flex-1 min-w-0 pb-20 md:pb-6"><LocalizedContent>{children}</LocalizedContent></main>
 
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex justify-around py-2 z-10">
@@ -107,7 +113,7 @@ export function AppShell({
                 : "text-slate-500"
             }`}
           >
-            {item.label}
+            {t(item.label)}
           </Link>
         ))}
       </nav>
