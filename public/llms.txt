@@ -1,0 +1,37 @@
+# DukaSmart
+
+> DukaSmart is a browser-based sales, inventory, purchasing, and reporting platform for small retail shops in Tanzania.
+
+DukaSmart helps shop owners and staff record paid and credit sales, maintain quantity-based product stock, record supplier purchases, and review owner reports. The service is designed for phones, tablets, and computers.
+
+## Product
+- [Home](https://dukasmart.online/): Product overview and account signup.
+- [Features](https://dukasmart.online/features): Overview of shop workflows.
+- [Sales management](https://dukasmart.online/features/sales-management): Record sales and update stock.
+- [Inventory management](https://dukasmart.online/features/inventory-management): Product quantities and low-stock thresholds.
+- [Purchase management](https://dukasmart.online/features/purchase-management): Record received stock and purchase costs.
+- [Credit sales](https://dukasmart.online/features/credit-sales): Record paid or credit status and optional customer details.
+- [Business reports](https://dukasmart.online/features/business-reports): Daily and monthly summaries, including estimated gross product profit.
+
+## Shop types
+- [Hardware shops](https://dukasmart.online/solutions/hardware-shops)
+- [Mini supermarkets](https://dukasmart.online/solutions/mini-supermarkets)
+- [Electronics shops](https://dukasmart.online/solutions/electronics-shops)
+- [Cosmetics shops](https://dukasmart.online/solutions/cosmetics-shops)
+- [General retail](https://dukasmart.online/solutions/general-retail)
+
+## Guides and tools
+- [Knowledge hub](https://dukasmart.online/blog): Practical guides for small retailers.
+- [Profit calculator](https://dukasmart.online/tools/profit-calculator): Estimates gross profit and gross margin; it does not calculate net profit.
+- [Stock reorder calculator](https://dukasmart.online/tools/stock-calculator): Estimates a reorder point from average daily sales, lead time, and safety stock.
+
+## About and support
+- [About DukaSmart](https://dukasmart.online/about)
+- [Frequently asked questions](https://dukasmart.online/faqs)
+- [Contact support](https://dukasmart.online/contact): WhatsApp support.
+- [Privacy policy](https://dukasmart.online/privacy)
+
+## Product limitations
+DukaSmart is not a payment gateway or dedicated barcode POS terminal. It does not currently provide automated credit collection or reminders, offline operation, serial-number or warranty tracking, or expiry-date management. Reported profit is an estimate of gross product profit before operating expenses, taxes, and other costs.
+
+The information above summarizes the public site and product as documented. Use the linked pages as the primary source for current details.
