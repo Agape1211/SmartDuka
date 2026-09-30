@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BrandAvatar } from "@/components/BrandAvatar";
 import { usePathname, useRouter } from "next/navigation";
 
 type NavItem = { href: string; label: string; ownerOnly?: boolean };
@@ -39,9 +40,12 @@ export function AppShell({
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Mobile top bar */}
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-brand text-white sticky top-0 z-10">
-        <div>
-          <p className="font-bold leading-tight">DukaSmart</p>
-          <p className="text-[11px] text-teal-100 leading-tight">{shopName}</p>
+        <div className="flex items-center gap-2">
+          <BrandAvatar size={32} />
+          <div>
+            <p className="font-bold leading-tight">DukaSmart</p>
+            <p className="text-[11px] text-teal-100 leading-tight">{shopName}</p>
+          </div>
         </div>
         <button
           onClick={handleLogout}
@@ -53,9 +57,12 @@ export function AppShell({
 
       {/* Sidebar (desktop) */}
       <aside className="hidden md:flex md:flex-col md:w-56 bg-brand-dark text-white px-4 py-6 shrink-0">
-        <div className="mb-8">
-          <p className="text-lg font-bold">DukaSmart</p>
-          <p className="text-xs text-teal-100">{shopName}</p>
+        <div className="mb-8 flex items-center gap-2">
+          <BrandAvatar />
+          <div>
+            <p className="text-lg font-bold">DukaSmart</p>
+            <p className="text-xs text-teal-100">{shopName}</p>
+          </div>
         </div>
         <nav className="flex-1 space-y-1">
           {items.map((item) => (
