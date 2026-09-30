@@ -5,7 +5,7 @@ import "./globals.css";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
 export const metadata: Metadata = {
-  ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
   title: {
     default: "DukaSmart | Sales & Stock Management for Tanzanian Shops",
     template: "%s | DukaSmart",
@@ -27,13 +27,15 @@ export const metadata: Metadata = {
     title: "DukaSmart | Sales & Stock Management for Tanzanian Shops",
     description:
       "Manage shop sales, stock, purchases, and business reports in one simple tool built for Tanzanian retailers.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "DukaSmart shop management" }],
     ...(siteUrl ? { url: siteUrl } : {}),
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "DukaSmart | Sales & Stock Management for Tanzanian Shops",
     description:
       "Manage shop sales, stock, purchases, and business reports in one simple tool built for Tanzanian retailers.",
+    images: ["/opengraph-image"],
   },
 };
 

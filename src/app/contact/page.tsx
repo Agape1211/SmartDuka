@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { MarketingPage } from "@/components/MarketingLayout";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { alternates: process.env.NEXT_PUBLIC_SITE_URL ? { canonical: "/contact" } : undefined, title: "Contact us" };
+export const metadata: Metadata = createPageMetadata(
+  "Contact DukaSmart support",
+  "Get help setting up DukaSmart for your shop. Contact the Tanzania-based support team directly on WhatsApp.",
+  "/contact",
+);
 const whatsappUrl = "https://wa.me/255616234063";
 
 export default function ContactPage() {

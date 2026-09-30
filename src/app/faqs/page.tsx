@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingPage } from "@/components/MarketingLayout";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { alternates: process.env.NEXT_PUBLIC_SITE_URL ? { canonical: "/faqs" } : undefined, title: "Frequently asked questions" };
+export const metadata: Metadata = createPageMetadata(
+  "Shop management FAQs",
+  "Answers about DukaSmart shop accounts, employee access, credit sales, mobile use, stock management, and support.",
+  "/faqs",
+);
 
 const questions = [["What is DukaSmart?", "DukaSmart is a sales and inventory management platform for small retail businesses. It helps you record sales, manage products and stock, record purchases, and review reports."], ["Can I create my own shop account?", "Yes. Select Start free, enter your shop and owner details, and you will be signed in to your new dashboard."], ["Can my employees use DukaSmart?", "Yes. Owners can create employee accounts for their shop. Employees can record sales and purchases, while owner-only reporting stays protected."], ["Does DukaSmart support credit sales?", "Yes. When recording a sale, choose paid or credit and optionally include customer details. Reports show outstanding credit totals."], ["Can I use it on my phone?", "Yes. The interface is responsive and designed to work at the counter on phones, tablets, and desktop computers."], ["How can I get help?", "Contact us on WhatsApp and our team will help you with setup or questions."]];
 

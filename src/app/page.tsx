@@ -10,17 +10,35 @@ export const metadata: Metadata = {
   alternates: process.env.NEXT_PUBLIC_SITE_URL ? { canonical: "/" } : undefined,
 };
 
+const organizationUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
 const websiteStructuredData = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: "DukaSmart",
-  applicationCategory: "BusinessApplication",
-  operatingSystem: "Web",
-  description:
-    "Sales, stock, purchase, and reporting software for Tanzanian retail shops.",
-  ...(process.env.NEXT_PUBLIC_SITE_URL
-    ? { url: process.env.NEXT_PUBLIC_SITE_URL }
-    : {}),
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${organizationUrl}/#organization`,
+      name: "DukaSmart",
+      url: organizationUrl,
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+255616234063",
+        contactType: "customer support",
+        availableLanguage: ["English", "Swahili"],
+      },
+    },
+    {
+      "@type": "WebApplication",
+      name: "DukaSmart",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      description:
+        "Sales, stock, purchase, and reporting software for Tanzanian retail shops.",
+      ...(process.env.NEXT_PUBLIC_SITE_URL
+        ? { url: process.env.NEXT_PUBLIC_SITE_URL }
+        : {}),
+      publisher: { "@id": `${organizationUrl}/#organization` },
+    },
+  ],
 };
 
 const features = [
