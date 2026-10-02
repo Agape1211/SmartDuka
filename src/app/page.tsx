@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Sales & Inventory Management Software for Tanzanian Shops",
   description: "Manage sales, stock, purchases and credit with DukaSmart, a simple business management platform built for small shops in Tanzania.",
-  alternates: process.env.NEXT_PUBLIC_SITE_URL ? { canonical: "/" } : undefined,
+  alternates: { canonical: "/" },
 };
 
 const organizationUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
@@ -23,6 +23,13 @@ const websiteStructuredData = {
       "@id": `${organizationUrl}/#organization`,
       name: "DukaSmart",
       url: organizationUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: new URL("/dukasmart.png", organizationUrl).toString(),
+      },
+      description: "Sales, stock, purchase, and reporting software for Tanzanian retail shops.",
+      areaServed: { "@type": "Country", name: "Tanzania" },
+      knowsLanguage: ["en-TZ", "sw-TZ"],
       contactPoint: {
         "@type": "ContactPoint",
         telephone: "+255616234063",
@@ -36,9 +43,18 @@ const websiteStructuredData = {
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
       url: organizationUrl,
-      description:
-        "Sales, stock, purchase, and reporting software for Tanzanian retail shops.",
+      brand: { "@type": "Brand", name: "DukaSmart" },
+      areaServed: { "@type": "Country", name: "Tanzania" },
+      inLanguage: ["en-TZ", "sw-TZ"],
       publisher: { "@id": `${organizationUrl}/#organization` },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${organizationUrl}/#website`,
+      name: "DukaSmart",
+      url: organizationUrl,
+      publisher: { "@id": `${organizationUrl}/#organization` },
+      inLanguage: ["en-TZ", "sw-TZ"],
     },
   ],
 };

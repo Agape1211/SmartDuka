@@ -2,7 +2,7 @@ import Link from "next/link";
 import { MarketingPage } from "@/components/MarketingLayout";
 import type { Article, SearchPage } from "@/lib/seo-content";
 
-const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
+import { siteOrigin } from "@/lib/seo";
 
 function StructuredData({ value }: { value: object }) {
   const json = JSON.stringify(value).replace(/</g, "\\u003c");
@@ -29,8 +29,20 @@ export function SearchContentPage({ page, kind }: { page: SearchPage; kind: "fea
   const crumbs = [{ label: "Home", href: "/" }, { label: section === "features" ? "Features" : "Solutions", href: `/${section}` }, { label: page.title, href: `/${section}/${page.slug}` }];
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: crumbs.map((item, index) => ({ "@type": "ListItem", position: index + 1, name: item.label, item: new URL(item.href, siteOrigin).toString() })),
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: crumbs.map((item, index) => ({ "@type": "ListItem", position: index + 1, name: item.label, item: new URL(item.href, siteOrigin).toString() })),
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: page.faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: { "@type": "Answer", text: faq.answer },
+        })),
+      },
+    ],
   };
 
   return (
@@ -83,7 +95,15 @@ export function ArticlePage({ article }: { article: Article }) {
     datePublished: article.published,
     dateModified: article.published,
     author: { "@type": "Organization", name: "DukaSmart", url: new URL("/about", siteOrigin).toString() },
-    publisher: { "@type": "Organization", name: "DukaSmart", url: siteOrigin },
+    publisher: {
+      "@type": "Organization",
+      name: "DukaSmart",
+      url: siteOrigin,
+      logo: {
+        "@type": "ImageObject",
+        url: new URL("/dukasmart.png", siteOrigin).toString(),
+      },
+    },
     mainEntityOfPage: new URL(`/blog/${article.slug}`, siteOrigin).toString(),
   };
   return (

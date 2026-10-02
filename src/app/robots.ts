@@ -1,16 +1,23 @@
 import type { MetadataRoute } from "next";
 
-export default function robots(): MetadataRoute.Robots {
-  const sitemapUrl = process.env.NEXT_PUBLIC_SITE_URL
-    ? new URL("/sitemap.xml", process.env.NEXT_PUBLIC_SITE_URL).toString()
-    : undefined;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
 
+export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/dashboard", "/products", "/purchases", "/reports", "/sales"],
+      disallow: [
+        "/api/",
+        "/dashboard",
+        "/products",
+        "/purchases",
+        "/reports",
+        "/sales",
+        "/login",
+        "/signup",
+      ],
     },
-    ...(sitemapUrl ? { sitemap: sitemapUrl } : {}),
+    sitemap: new URL("/sitemap.xml", siteUrl).toString(),
   };
 }

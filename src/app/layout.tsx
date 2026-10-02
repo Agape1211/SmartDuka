@@ -5,10 +5,10 @@ import { LanguageProvider } from "@/components/LanguageProvider";
 import type { Locale } from "@/lib/translations";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
 
 export const metadata: Metadata = {
-  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  metadataBase: new URL(siteUrl),
   title: {
     default: "DukaSmart | Sales & Stock Management for Tanzanian Shops",
     template: "%s | DukaSmart",
@@ -16,6 +16,15 @@ export const metadata: Metadata = {
   description:
     "Manage shop sales, stock, purchases, and business reports in one simple tool built for Tanzanian retailers.",
   applicationName: "DukaSmart",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
+  },
   keywords: [
     "shop management software Tanzania",
     "POS system Tanzania",
@@ -36,7 +45,7 @@ export const metadata: Metadata = {
     description:
       "Manage shop sales, stock, purchases, and business reports in one simple tool built for Tanzanian retailers.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "DukaSmart shop management" }],
-    ...(siteUrl ? { url: siteUrl } : {}),
+    url: siteUrl,
   },
   twitter: {
     card: "summary_large_image",
