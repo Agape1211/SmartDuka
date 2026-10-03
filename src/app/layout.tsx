@@ -10,11 +10,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "DukaSmart | Sales & Stock Management for Tanzanian Shops",
+    default: "DukaSmart | SME Operations Software for Tanzanian Shops",
     template: "%s | DukaSmart",
   },
   description:
-    "Manage shop sales, stock, purchases, and business reports in one simple tool built for Tanzanian retailers.",
+    "DukaSmart is SME operations software for Tanzanian shops and retail businesses. Track sales, stock, purchases, credit, and reports in one easy system.",
   applicationName: "DukaSmart",
   robots: {
     index: true,
@@ -26,32 +26,37 @@ export const metadata: Metadata = {
     },
   },
   keywords: [
+    "SME operations software Tanzania",
     "shop management software Tanzania",
+    "sales and inventory software Tanzania",
+    "inventory management software Tanzania",
     "POS system Tanzania",
     "point of sale software Tanzania",
-    "inventory management software Tanzania",
     "stock management system Tanzania",
-    "sales and inventory software for small businesses",
-    "retail software Tanzania",
+    "retail management software Tanzania",
     "hardware shop management software",
-    "mfumo wa mauzo Tanzania",
-    "mfumo wa kusimamia duka",
+    "mini supermarket software Tanzania",
+    "software for Tanzanian shops",
+    "business operations software for SMEs",
+    "mfumo wa usimamizi wa duka Tanzania",
+    "mfumo wa mauzo na hisa Tanzania",
+    "duka management software",
   ],
   openGraph: {
     type: "website",
     locale: "en_TZ",
     siteName: "DukaSmart",
-    title: "DukaSmart | Sales & Stock Management for Tanzanian Shops",
+    title: "DukaSmart | SME Operations Software for Tanzanian Shops",
     description:
-      "Manage shop sales, stock, purchases, and business reports in one simple tool built for Tanzanian retailers.",
+      "DukaSmart is SME operations software for Tanzanian shops and retail businesses. Track sales, stock, purchases, credit, and reports in one easy system.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "DukaSmart shop management" }],
     url: siteUrl,
   },
   twitter: {
     card: "summary_large_image",
-    title: "DukaSmart | Sales & Stock Management for Tanzanian Shops",
+    title: "DukaSmart | SME Operations Software for Tanzanian Shops",
     description:
-      "Manage shop sales, stock, purchases, and business reports in one simple tool built for Tanzanian retailers.",
+      "DukaSmart is SME operations software for Tanzanian shops and retail businesses. Track sales, stock, purchases, credit, and reports in one easy system.",
     images: ["/opengraph-image"],
   },
   ...(process.env.GOOGLE_SITE_VERIFICATION

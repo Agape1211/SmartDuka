@@ -92,6 +92,26 @@ PostgreSQL.
 Do not run `db/seed.ts` against a production project; it creates demo accounts
 and shop data. Never put production secrets in source control.
 
+## MVP scope and exclusions
+
+This build is intentionally focused on the local SME operations MVP and excludes paid external features during the first phase.
+
+### In scope for v1
+- Sales recording and stock reduction
+- Product catalogue and restocking
+- Credit tracking and simple payment status reporting
+- Dashboard summaries, top products, and low-stock alerts
+- Daily/monthly reports with CSV/PDF export
+- Owner/employee roles and access control
+- Local-first setup with no dependency on paid API services
+
+### Explicitly out of scope for v1
+- WhatsApp automation or automated message workflows
+- Payment collection, online checkout, or gateway integrations
+- M-Pesa, Stripe, PayPal, Flutterwave, or similar paid systems
+- Subscription billing or payment processing
+- AI assistants, marketing automation, or third-party CRM syncs
+
 ## Project layout
 
 ```
