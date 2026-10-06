@@ -1,7 +1,5 @@
--- DukaSmart core schema
--- Run with: psql "$DATABASE_URL" -f db/schema.sql
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto; -- for gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS pgcrypto; 
 
 CREATE TYPE role AS ENUM ('OWNER', 'EMPLOYEE');
 CREATE TYPE payment_status AS ENUM ('PAID', 'CREDIT');
@@ -35,7 +33,7 @@ CREATE TABLE products (
   unit          TEXT NOT NULL DEFAULT 'piece',
   cost_price    NUMERIC(12,2) NOT NULL DEFAULT 0,
   sell_price    NUMERIC(12,2) NOT NULL DEFAULT 0,
-  stock         INTEGER NOT NULL DEFAULT 0,
+  st ock         INTEGER NOT NULL DEFAULT 0,
   low_stock_at  INTEGER NOT NULL DEFAULT 5,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -60,8 +58,8 @@ CREATE TABLE sale_items (
   sale_id    UUID NOT NULL REFERENCES sales(id) ON DELETE CASCADE,
   product_id UUID NOT NULL REFERENCES products(id),
   quantity   INTEGER NOT NULL,
-  unit_price NUMERIC(12,2) NOT NULL, -- sell price at time of sale
-  unit_cost  NUMERIC(12,2) NOT NULL  -- cost price at time of sale (for profit calc)
+  unit_price NUMERIC(12,2) NOT NULL, 
+  unit_cost  NUMERIC(12,2) NOT NULL  
 );
 CREATE INDEX idx_sale_items_sale ON sale_items(sale_id);
 CREATE INDEX idx_sale_items_product ON sale_items(product_id);

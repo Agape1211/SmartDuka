@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "DukaSmart shop sales and stock management";
+export const alt = "DukaSmart digital operations for Tanzanian SMEs";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -42,10 +42,10 @@ export default function OpenGraphImage() {
           </div>
         </div>
         <div style={{ marginTop: 48, fontSize: 64, lineHeight: 1.08, fontWeight: 700 }}>
-          Run your shop with clarity.
+          Make business operations work better.
         </div>
         <div style={{ marginTop: 24, fontSize: 30, color: "#475569" }}>
-          Sales, stock, and business reports for Tanzanian retailers.
+          Practical systems for Tanzanian shops and SMEs.
         </div>
       </div>
     ),

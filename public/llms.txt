@@ -1,8 +1,13 @@
 # DukaSmart
 
-> DukaSmart is a browser-based sales, inventory, purchasing, and reporting platform for small retail shops in Tanzania.
+> DukaSmart helps Tanzanian SMEs improve operations through practical digital implementation, workflow automation, analytics, ongoing support, and focused software.
 
-DukaSmart helps shop owners and staff record paid and credit sales, maintain quantity-based product stock, record supplier purchases, and review owner reports. The service is designed for phones, tablets, and computers.
+DukaSmart's current live software helps shop owners and staff record paid and credit sales, maintain quantity-based product stock, record supplier purchases, and review owner reports. The service is designed for phones, tablets, and computers. Other business systems, digital presence, integrations, and automation are project-based service areas and are not all built-in software modules.
+
+## Services
+- [SME digital operations services](https://dukasmart.online/services): Digital presence, system implementation, workflow automation, analytics, and ongoing support.
+- [About DukaSmart](https://dukasmart.online/about): Service-first approach to improving SME operations and developing reusable software from repeated needs.
+- [Contact DukaSmart](https://dukasmart.online/contact): WhatsApp support at +255616234063 or product feedback by email at support.dukasmart12@gmail.com.
 
 ## Product
 - [Home](https://dukasmart.online/): Product overview and account signup.
@@ -26,9 +31,8 @@ DukaSmart helps shop owners and staff record paid and credit sales, maintain qua
 - [Stock reorder calculator](https://dukasmart.online/tools/stock-calculator): Estimates a reorder point from average daily sales, lead time, and safety stock.
 
 ## About and support
-- [About DukaSmart](https://dukasmart.online/about)
 - [Frequently asked questions](https://dukasmart.online/faqs)
-- [Contact support](https://dukasmart.online/contact): WhatsApp support.
+- [Contact support](https://dukasmart.online/contact): Discuss services, get onboarding support, or send product feedback to support.dukasmart12@gmail.com.
 - [Privacy policy](https://dukasmart.online/privacy)
 
 ## Product limitations

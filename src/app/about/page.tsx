@@ -4,8 +4,8 @@ import { MarketingPage } from "@/components/MarketingLayout";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPageMetadata(
-  "SME Operations Software for Tanzanian Shops",
-  "Learn how DukaSmart helps Tanzanian retailers and small businesses manage sales, stock, purchases, daily reporting, and operations from one simple system.",
+  "About DukaSmart | SME Digital Operations in Tanzania",
+  "DukaSmart helps Tanzanian SMEs digitize and improve operations through implementation, automation, analytics, practical software, and ongoing support.",
   "/about",
 );
 
@@ -13,19 +13,19 @@ export default function AboutPage() {
   return (
     <MarketingPage
       eyebrow="About DukaSmart"
-      title="Better visibility for every shop and SME operation."
-      intro="DukaSmart is a practical SME operations workspace for Tanzanian shop owners and their teams. It brings sales, inventory, purchasing, credit, and daily reporting into one simple place."
+      title="Better operations, built around how your business works."
+      intro="DukaSmart helps Tanzanian small and medium-sized businesses replace disconnected manual work with practical digital workflows, implementation, automation, analytics, and ongoing technology support."
     >
       <div className="space-y-10 text-slate-700">
         <section>
-          <h2 className="text-2xl font-bold text-slate-950">Our purpose</h2>
-          <p className="mt-3 leading-8">Running a shop should not mean guessing what sold, what is running out, or where money is tied up. DukaSmart helps Tanzanian businesses move from scattered notebooks and WhatsApp messages into a clearer, more controlled operating system.</p>
+          <h2 className="text-2xl font-bold text-slate-950">The problem we solve</h2>
+          <p className="mt-3 leading-8">Many businesses manage orders, stock, expenses, and customer details across notebooks, spreadsheets, calls, and WhatsApp. We help connect the work that matters, make records easier to trust, and give owners a clearer view of daily operations.</p>
         </section>
         <section className="grid gap-5 sm:grid-cols-3">
           {[
-            ["Simple at the counter", "Record a sale quickly from a phone, tablet, or desktop without slowing down your team."],
-            ["Useful every day", "See low-stock alerts, sales performance, and outstanding credit when you need them most."],
-            ["Built for your team", "Owners can manage the business while employees handle transactions, restocking, and routine sales tasks."],
+            ["Problem first", "We map the real workflow before recommending software, configuration, or automation."],
+            ["Use what already works", "We can build around suitable existing tools instead of forcing every business into a new generic system."],
+            ["Improve with evidence", "We pilot with users, document repeatable processes, and develop software only when a shared need is clear."],
           ].map(([title, text]) => (
             <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <h2 className="font-bold text-slate-950">{title}</h2>
@@ -34,9 +34,9 @@ export default function AboutPage() {
           ))}
         </section>
         <section className="rounded-2xl bg-brand-dark px-6 py-8 text-white sm:px-8">
-          <h2 className="text-2xl font-bold">Ready to make daily operations clearer?</h2>
-          <p className="mt-2 text-teal-50">Create your shop account and start with the essentials for sales, stock, and reporting.</p>
-          <Link href="/signup" className="mt-5 inline-block rounded-lg bg-white px-4 py-2.5 font-semibold text-brand-dark">Create an account</Link>
+          <h2 className="text-2xl font-bold">Service first. Reusable software next.</h2>
+          <p className="mt-2 text-teal-50">We deliver implementation and support, learn from repeated customer problems, and turn proven workflows into reusable tools where that creates lasting value.</p>
+          <div className="mt-5 flex flex-wrap gap-3"><Link href="/services" className="inline-block rounded-lg bg-white px-4 py-2.5 font-semibold text-brand-dark">Explore services</Link><Link href="/contact" className="inline-block rounded-lg border border-white/40 px-4 py-2.5 font-semibold text-white">Discuss a workflow</Link></div>
         </section>
       </div>
     </MarketingPage>

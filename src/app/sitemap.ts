@@ -6,6 +6,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
 const staticPages = [
   { path: "", changeFrequency: "weekly" as const, priority: 1 },
   { path: "/about", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/services", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/faqs", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/contact", changeFrequency: "yearly" as const, priority: 0.5 },
   { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },

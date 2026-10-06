@@ -8,6 +8,7 @@ import {
 } from "@/components/LanguageProvider";
 
 const footerLinks = [
+  { href: "/services", label: "Digital operations services" },
   { href: "/features", label: "Features" },
   { href: "/solutions", label: "Shop solutions" },
   { href: "/blog", label: "Knowledge hub" },
