@@ -6,6 +6,7 @@ import {
   LocalizedContent,
   useLanguage,
 } from "@/components/LanguageProvider";
+import { appVersion } from "@/lib/version";
 
 const footerLinks = [
   { href: "/services", label: "Digital operations services" },
@@ -40,7 +41,12 @@ export function MarketingFooter() {
   return (
     <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-7 text-sm text-slate-500 sm:flex-row sm:px-8">
-        <p>© {new Date().getFullYear()} DukaSmart. {locale === "sw" ? "Jua biashara yako." : "Jua biashara yako."}</p>
+        <div className="flex items-center gap-3">
+          <p>© {new Date().getFullYear()} DukaSmart. {locale === "sw" ? "Jua biashara yako." : "Jua biashara yako."}</p>
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold tracking-wide text-slate-600">
+            Version {appVersion}
+          </span>
+        </div>
         <nav aria-label={locale === "sw" ? "Viungo vya chini ya ukurasa" : "Footer navigation"} className="flex flex-wrap justify-center gap-x-5 gap-y-2">
           {footerLinks.map((link) => <Link key={link.href} href={link.href} className="font-medium hover:text-brand-dark">{t(link.label)}</Link>)}
         </nav>

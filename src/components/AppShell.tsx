@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BrandAvatar } from "@/components/BrandAvatar";
 import { LocalizedContent, useLanguage } from "@/components/LanguageProvider";
+import { appVersion } from "@/lib/version";
 import { usePathname, useRouter } from "next/navigation";
 
 type NavItem = { href: string; label: string; ownerOnly?: boolean };
@@ -87,6 +88,9 @@ export function AppShell({
           <p className="text-xs text-teal-100 mb-2">
             {name} · {t(role === "OWNER" ? "Owner" : "Employee")}
           </p>
+          <div className="mb-3 rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-[10px] font-semibold tracking-wide text-teal-100">
+            Version {appVersion}
+          </div>
           <button
             onClick={handleLogout}
             className="text-xs bg-white/10 hover:bg-white/20 w-full text-left px-3 py-2 rounded-lg"

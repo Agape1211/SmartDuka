@@ -40,7 +40,12 @@ PostgreSQL.
    applying this auth change to an existing DukaSmart database, run
    `db/migrations/20260928_supabase_auth.sql` instead.
 
-4. **Run it**
+4. **GitHub versioning.** The app shows the live version from the GitHub tag
+   release. Every push to `main` creates or bumps a `vX.Y.Z` tag and GitHub
+   release via `.github/workflows/version-release.yml`, and the app reads that
+   value from `NEXT_PUBLIC_APP_VERSION` at build time.
+
+5. **Run it**
    ```bash
    npm run dev
    ```
