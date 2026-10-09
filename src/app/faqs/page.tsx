@@ -17,7 +17,7 @@ const questions = [
   ["What features are available in the app today?", "The live app includes product and stock records, sales, supplier purchases, paid or credit status, low-stock thresholds, owner dashboards, reports, and CSV/PDF exports. The app is designed for small retail workflows."],
   ["Are expenses, customer management, websites, and automation built into the app?", "Not currently. Websites, wider customer-management workflows, expense tracking, automated messaging, and third-party integrations are not built-in modules today. Some can be scoped as implementation services; software features should be prioritized from repeated customer needs."],
   ["Can I use it on my phone?", "Yes. The interface is responsive and designed to work at the counter on phones, tablets, and desktop computers."],
-  ["How can I get help or share feedback?", "Use WhatsApp at +255 616 234 063 for support, or email support.dukasmart12@gmail.com to share product feedback and feature requests. Feedback from owners, employees, and trial users will help us prioritize the roadmap. Direct support is available; automated WhatsApp messaging is not a built-in product feature."],
+  ["How can I get help or share feedback?", "Use WhatsApp at +255 616 234 063 for support and to share product feedback and feature requests. Feedback from owners, employees, and trial users helps us prioritize the roadmap. Direct support is available; automated WhatsApp messaging is not a built-in product feature."],
 ];
 
 export default function FaqsPage() {

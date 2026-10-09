@@ -24,10 +24,8 @@ export default function ContactPage() {
         </p>
         <div className="mt-7 flex flex-wrap gap-3">
           <a href="https://wa.me/255616234063" target="_blank" rel="noreferrer" className="inline-flex items-center rounded-xl bg-brand px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Message us on WhatsApp</a>
-          <a href="mailto:support.dukasmart12@gmail.com?subject=DukaSmart%20product%20feedback" className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:border-brand hover:text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Email product feedback</a>
           <Link href="/services" className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:border-brand hover:text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Explore services</Link>
         </div>
-        <p className="mt-4 text-sm text-slate-500">Send feedback or feature requests to <a className="font-semibold text-brand-dark underline" href="mailto:support.dukasmart12@gmail.com">support.dukasmart12@gmail.com</a>.</p>
       </div>
     </MarketingPage>
   );

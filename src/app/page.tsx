@@ -33,7 +33,6 @@ const websiteStructuredData = {
       contactPoint: {
         "@type": "ContactPoint",
         telephone: "+255616234063",
-        email: "support.dukasmart12@gmail.com",
         url: `${organizationUrl}/contact`,
         contactType: "customer support",
         availableLanguage: ["English", "Swahili"],
