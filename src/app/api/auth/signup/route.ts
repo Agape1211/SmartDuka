@@ -6,16 +6,31 @@ import { pool } from "@/lib/db";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
-const signupSchema = z.object({ shopName: z.string().trim().min(2).max(120), name: z.string().trim().min(2).max(120), email: z.string().trim().email().max(254), password: z.string().min(10).max(128) });
+const signupSchema = z.object({
+  shopName: z.string().trim().min(2).max(120),
+  name: z.string().trim().min(2).max(120),
+  email: z.string().trim().max(254).optional().or(z.literal("")),
+  password: z.string().min(10).max(128),
+});
+
 type Account = { id: string; shop_id: string; name: string; email: string; role: "OWNER" };
 
 function isUniqueViolation(error: unknown): error is { code: string } { return typeof error === "object" && error !== null && "code" in error && (error as { code: unknown }).code === "23505"; }
 
+function buildFallbackEmail(name: string, shopName: string) {
+  const base = (name || shopName)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "user";
+  return `${base}-${crypto.randomUUID().slice(0, 8)}@dukasmart.local`;
+}
+
 export async function POST(request: NextRequest) {
   const parsed = signupSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Enter a shop name, your name, a valid email, and a password of at least 10 characters." }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: "Enter a shop name, your name, and a password of at least 10 characters." }, { status: 400 });
   const { shopName, name, password } = parsed.data;
-  const email = parsed.data.email.toLowerCase();
+  const email = parsed.data.email?.trim() ? parsed.data.email.trim().toLowerCase() : buildFallbackEmail(name, shopName);
   const admin = createAdminClient();
   const supabase = createClient(await cookies());
   let client: PoolClient | undefined;

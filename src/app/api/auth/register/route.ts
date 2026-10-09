@@ -6,10 +6,15 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 const bodySchema = z.object({
   name: z.string().trim().min(2).max(120),
-  email: z.string().trim().email().max(254),
+  email: z.string().trim().max(254).optional().or(z.literal("")),
   password: z.string().min(10).max(128),
   role: z.enum(["OWNER", "EMPLOYEE"]).default("EMPLOYEE"),
 });
+
+function buildFallbackEmail(name: string) {
+  const base = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "user";
+  return `${base}-${crypto.randomUUID().slice(0, 8)}@dukasmart.local`;
+}
 
 // Only a logged-in Owner may create new staff accounts for their shop.
 export async function POST(req: NextRequest) {
@@ -23,7 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
   const { name, password, role } = parsed.data;
-  const email = parsed.data.email.toLowerCase();
+  const email = parsed.data.email?.trim() ? parsed.data.email.trim().toLowerCase() : buildFallbackEmail(name);
 
   const existing = await query(`SELECT id FROM users WHERE email = $1`, [
     email,

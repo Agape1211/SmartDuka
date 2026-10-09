@@ -8,9 +8,26 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 const bodySchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().min(1).max(254),
   password: z.string().min(1),
 });
+
+async function resolveLoginEmail(identifier: string) {
+  const trimmed = identifier.trim();
+  if (!trimmed) return null;
+  const normalized = trimmed.toLowerCase();
+
+  if (normalized.includes("@")) {
+    return normalized;
+  }
+
+  const result = await query<{ email: string }>(
+    `SELECT email FROM users WHERE lower(name) = $1 OR lower(email) = $1 LIMIT 1`,
+    [normalized]
+  );
+
+  return result.rows[0]?.email ?? null;
+}
 
 async function migrateLegacyAccount(email: string, password: string) {
   const legacy = await query<{
@@ -64,7 +81,12 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 400 });
   }
-  const { email, password } = parsed.data;
+  const { password } = parsed.data;
+  const email = await resolveLoginEmail(parsed.data.email);
+  if (!email) {
+    return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+  }
+
   const supabase = createClient(await cookies());
   let { error } = await supabase.auth.signInWithPassword({
     email: email.toLowerCase(),
