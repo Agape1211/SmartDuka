@@ -29,7 +29,7 @@ export function MarketingHeader() {
       </Link>
       <div className="flex items-center gap-2 sm:gap-3">
         <Link href="/login" className="rounded-lg px-2 py-2 text-sm font-semibold text-slate-700 hover:text-brand-dark sm:px-3">{t("Sign in")}</Link>
-        <Link href="/signup" className="rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark sm:px-4">{t("Start free")}</Link>
+        <Link href="/signup" className="rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark sm:px-4">{t("Sign up")}</Link>
       </div>
     </header>
   );

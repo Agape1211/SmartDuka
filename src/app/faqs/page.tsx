@@ -11,7 +11,7 @@ export const metadata: Metadata = createPageMetadata(
 
 const questions = [
   ["What is DukaSmart?", "DukaSmart is a sales and inventory management platform for small retail businesses. It helps you record sales, manage products and stock, record purchases, and review reports."],
-  ["Can I create my own shop account?", "Yes. Select Start free, enter your shop and owner details, and you will be signed in to your new dashboard."],
+  ["Can I create my own shop account?", "Yes. Select Sign up, enter your shop and owner details, and you will be signed in to your new dashboard."],
   ["Can my employees use DukaSmart?", "Yes. Owners can create employee accounts for their shop. Employees can record sales and purchases, while owner-only reporting stays protected."],
   ["Does DukaSmart support credit sales?", "Yes. When recording a sale, choose paid or credit and optionally include customer details. Reports show outstanding credit totals."],
   ["What features are available in the app today?", "The live app includes product and stock records, sales, supplier purchases, paid or credit status, low-stock thresholds, owner dashboards, reports, and CSV/PDF exports. The app is designed for small retail workflows."],

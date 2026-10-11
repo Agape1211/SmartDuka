@@ -334,7 +334,7 @@ const sw: Dictionary = {
   "Privacy": "Faragha",
   "Contact": "Wasiliana nasi",
   "Sign in": "Ingia",
-  "Start free": "Anza bila malipo",
+  "Sign up": "Jisajili",
   "Built for growing Tanzanian shops": "Kwa maduka ya Tanzania yanayokua",
   "Shop sales and stock management, made simple.": "Simamia mauzo na bidhaa za duka lako kwa urahisi.",
   "DukaSmart is shop management software for Tanzanian retailers. Record sales, track stock and purchases, and follow business performance from your phone or computer.": "DukaSmart ni mfumo wa kusimamia maduka ya rejareja Tanzania. Rekodi mauzo, fuatilia bidhaa na manunuzi, na angalia mwenendo wa biashara yako kwa simu au kompyuta.",
