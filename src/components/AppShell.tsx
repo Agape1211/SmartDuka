@@ -101,12 +101,12 @@ export function AppShell({
       <main className="flex-1 min-w-0 pb-20 md:pb-6"><LocalizedContent>{children}</LocalizedContent></main>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex justify-around py-2 z-10">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex justify-start overflow-x-auto py-2 z-10">
         {items.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`text-[11px] px-2 py-1 rounded-lg ${
+            className={`shrink-0 whitespace-nowrap text-[11px] px-3 py-1 rounded-lg ${
               pathname.startsWith(item.href)
                 ? "text-brand font-semibold"
                 : "text-slate-500"
