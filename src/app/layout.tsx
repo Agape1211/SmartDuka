@@ -68,9 +68,12 @@ export const metadata: Metadata = {
       "Practical digital implementation, workflow improvement, support, and shop software for Tanzanian SMEs.",
     images: ["/opengraph-image"],
   },
-  ...(process.env.GOOGLE_SITE_VERIFICATION
-    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
-    : {}),
+  verification: {
+    other: { "msvalidate.01": "D7F7C68068A95803B73C9F7FA06304D8" },
+    ...(process.env.GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+      : {}),
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
