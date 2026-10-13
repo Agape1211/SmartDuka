@@ -43,6 +43,7 @@ export function MarketingFooter() {
         <p>© {new Date().getFullYear()} DukaSmart. {locale === "sw" ? "Jua biashara yako." : "Jua biashara yako."}</p>
         <nav aria-label={locale === "sw" ? "Viungo vya chini ya ukurasa" : "Footer navigation"} className="flex flex-wrap justify-center gap-x-5 gap-y-2">
           {footerLinks.map((link) => <Link key={link.href} href={link.href} className="font-medium hover:text-brand-dark">{t(link.label)}</Link>)}
+          <a href="https://www.instagram.com/dukasmart23/" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-brand-dark">Instagram @dukasmart23</a>
         </nav>
       </div>
     </footer>

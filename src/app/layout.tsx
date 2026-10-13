@@ -7,6 +7,13 @@ import type { Locale } from "@/lib/translations";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "DukaSmart",
+  url: siteUrl,
+  sameAs: ["https://www.instagram.com/dukasmart23/"],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -75,6 +82,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang={initialLocale === "sw" ? "sw-TZ" : "en-TZ"} className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         <LanguageProvider initialLocale={initialLocale} hasSavedLocale={hasSavedLocale}>
           {children}
           <WhatsAppSupportLink />
