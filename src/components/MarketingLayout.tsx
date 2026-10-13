@@ -39,17 +39,28 @@ export function MarketingFooter() {
   const { t, locale } = useLanguage();
   return (
     <footer className="border-t border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-7 text-sm text-slate-500 sm:flex-row sm:px-8">
-        <p>© {new Date().getFullYear()} DukaSmart. {locale === "sw" ? "Jua biashara yako." : "Jua biashara yako."}</p>
-        <nav aria-label={locale === "sw" ? "Viungo vya chini ya ukurasa" : "Footer navigation"} className="flex flex-wrap justify-center gap-x-5 gap-y-2">
-          {footerLinks.map((link) => <Link key={link.href} href={link.href} className="font-medium hover:text-brand-dark">{t(link.label)}</Link>)}
-          <a href="https://www.instagram.com/dukasmart23/" target="_blank" rel="noopener noreferrer" aria-label="DukaSmart on Instagram: @dukasmart23" title="Instagram @dukasmart23" className="inline-flex size-6 items-center justify-center text-slate-500 transition hover:text-brand-dark">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="size-5" stroke="currentColor" strokeWidth="1.8">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+      <div className="mx-auto max-w-7xl px-5 py-7 sm:px-8">
+        <div className="flex items-center justify-between gap-4 text-sm text-slate-500">
+          <p>© {new Date().getFullYear()} DukaSmart. {locale === "sw" ? "Jua biashara yako." : "Jua biashara yako."}</p>
+          <a href="https://www.instagram.com/dukasmart23/" target="_blank" rel="noopener noreferrer" aria-label="DukaSmart on Instagram: @dukasmart23" title="Instagram @dukasmart23" className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg transition hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="size-8">
+              <defs>
+                <linearGradient id="instagram-gradient" x1="0" y1="24" x2="24" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#ffdc80" />
+                  <stop offset="0.38" stopColor="#fc4a5a" />
+                  <stop offset="0.72" stopColor="#c135b5" />
+                  <stop offset="1" stopColor="#405de6" />
+                </linearGradient>
+              </defs>
+              <rect width="24" height="24" rx="6" fill="url(#instagram-gradient)" />
+              <rect x="4" y="4" width="16" height="16" rx="4.5" fill="none" stroke="white" strokeWidth="1.8" />
+              <circle cx="12" cy="12" r="3.7" fill="none" stroke="white" strokeWidth="1.8" />
+              <circle cx="17.2" cy="6.9" r="1.1" fill="white" />
             </svg>
           </a>
+        </div>
+        <nav aria-label={locale === "sw" ? "Viungo vya chini ya ukurasa" : "Footer navigation"} className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-slate-100 pt-5 text-sm sm:grid-cols-3 md:grid-cols-5">
+          {footerLinks.map((link) => <Link key={link.href} href={link.href} className="font-medium text-slate-600 transition hover:text-brand-dark">{t(link.label)}</Link>)}
         </nav>
       </div>
     </footer>
