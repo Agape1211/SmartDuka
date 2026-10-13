@@ -64,6 +64,15 @@ CREATE TABLE sale_items (
 CREATE INDEX idx_sale_items_sale ON sale_items(sale_id);
 CREATE INDEX idx_sale_items_product ON sale_items(product_id);
 
+CREATE TABLE sale_payments (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  sale_id        UUID NOT NULL REFERENCES sales(id) ON DELETE CASCADE,
+  recorded_by_id UUID NOT NULL REFERENCES users(id),
+  amount         NUMERIC(12,2) NOT NULL CHECK (amount > 0),
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX idx_sale_payments_sale ON sale_payments(sale_id);
+
 CREATE TABLE purchases (
   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   shop_id        UUID NOT NULL REFERENCES shops(id) ON DELETE CASCADE,

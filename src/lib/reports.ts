@@ -35,7 +35,17 @@ export async function getSalesReport(shopId: string, from: Date, to: Date) {
        COALESCE(SUM(s.total), 0) AS revenue,
        COALESCE(SUM((si.unit_price - si.unit_cost) * si.quantity), 0) AS profit,
        COUNT(DISTINCT s.id) AS sale_count,
-       COALESCE(SUM(CASE WHEN s.payment_status = 'CREDIT' THEN s.total ELSE 0 END), 0) AS credit_outstanding
+       COALESCE((
+         SELECT SUM(GREATEST(s2.total - COALESCE(payment_totals.amount_paid, 0), 0))
+         FROM sales s2
+         LEFT JOIN (
+           SELECT sale_id, SUM(amount) AS amount_paid
+           FROM sale_payments
+           GROUP BY sale_id
+         ) payment_totals ON payment_totals.sale_id = s2.id
+         WHERE s2.shop_id = $1 AND s2.created_at >= $2 AND s2.created_at < $3
+           AND s2.payment_status = 'CREDIT'
+       ), 0) AS credit_outstanding
      FROM sales s
      LEFT JOIN sale_items si ON si.sale_id = s.id
      WHERE s.shop_id = $1 AND s.created_at >= $2 AND s.created_at < $3`,

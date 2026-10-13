@@ -36,9 +36,10 @@ PostgreSQL.
    The Supabase secret key is server-only; never expose it through a `NEXT_PUBLIC_`
    variable or commit it. Supabase Auth must be enabled for email/password.
 
-3. **Create the schema.** Run `db/schema.sql` in the Supabase SQL Editor. If
-   applying this auth change to an existing DukaSmart database, run
-   `db/migrations/20260928_supabase_auth.sql` instead.
+3. **Create or update the schema.** Run `db/schema.sql` for a new database. For
+   an existing database, apply pending migrations in order. If it predates
+   Supabase Auth, first run `db/migrations/20260928_supabase_auth.sql`, then
+   `db/migrations/20261013_sales_payments.sql` to enable customer debt payments.
 
 4. **GitHub versioning.** The app shows the live version from the GitHub tag
    release. Every push to `main` creates or bumps a `vX.Y.Z` tag and GitHub
@@ -56,10 +57,13 @@ PostgreSQL.
 ## Deploy to Vercel + Supabase
 
 1. **Create a Supabase project.** Enable email/password authentication. In the
-   SQL Editor, run `db/schema.sql` for a new database, or
-   `db/migrations/20260928_supabase_auth.sql` for an existing DukaSmart
-   database. Existing users can sign in with their current password once;
-   that first successful login links their profile to Supabase Auth.
+   SQL Editor, run `db/schema.sql` for a new database. For an existing
+   DukaSmart database, apply pending migrations in order. If it predates
+   Supabase Auth, first run `db/migrations/20260928_supabase_auth.sql`, then
+   run `db/migrations/20261013_sales_payments.sql` to add customer payment
+   history and partial/full debt settlement. Existing users can sign in with
+   their current password once; that first successful login links their
+   profile to Supabase Auth.
 
 2. **Copy the database connection string.** In Supabase, open **Connect** and
    select the **Transaction pooler** connection string. It is intended for
@@ -104,7 +108,7 @@ This build is intentionally focused on the local SME operations MVP and excludes
 ### In scope for v1
 - Sales recording and stock reduction
 - Product catalogue and restocking
-- Credit tracking and simple payment status reporting
+- Customer debt tracking with partial and full payment recording
 - Dashboard summaries, top products, and low-stock alerts
 - Daily/monthly reports with CSV/PDF export
 - Owner/employee roles and access control
@@ -135,11 +139,13 @@ src/app/api/sales/            list recent sales, create (transactional)
 src/app/api/purchases/         list recent purchases, create (transactional)
 src/app/api/dashboard/          summary (totals/profit/top/low-stock), chart
 src/app/api/reports/             daily, monthly, export (CSV/PDF)
+src/app/api/debts/               owner debt balances and payment recording
 src/app/(app)/              Authenticated pages behind the shared AppShell:
   dashboard/                  Owner dashboard — totals, chart, alerts
   sales/new/                   Record-a-sale — cart, stock, payment status
   products/                     Product catalogue — search/filter/CRUD
   purchases/                     Restocking — form + purchase history
+   debts/                          Owner debt balances and payment history
   reports/                        Daily/monthly report + CSV/PDF export
 src/components/AppShell.tsx  Shared nav (sidebar on desktop, bottom nav + top
                               bar on mobile), role-aware menu, logout
@@ -155,6 +161,8 @@ src/components/AppShell.tsx  Shared nav (sidebar on desktop, bottom nav + top
 - `sales` / `sale_items` — a sale has one or more line items; each line item
   freezes the `unit_price` and `unit_cost` at time of sale (so later cost
   changes don't distort historical profit)
+- `sale_payments` — records each payment received against a credit sale, with
+   the amount, time, and owner who recorded it
 - `purchases` / `purchase_items` — stock received from suppliers
 
 ## Production readiness

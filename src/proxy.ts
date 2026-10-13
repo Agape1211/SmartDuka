@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 // Routes only the Owner role may view.
-const OWNER_ONLY_PREFIXES = ["/dashboard", "/reports"];
+const OWNER_ONLY_PREFIXES = ["/dashboard", "/reports", "/debts"];
 // Routes that require any logged-in user (Owner or Employee).
 const PROTECTED_PREFIXES = [
   "/dashboard",
   "/reports",
+  "/debts",
   "/products",
   "/sales",
   "/purchases",
@@ -64,6 +65,7 @@ export const config = {
   matcher: [
     "/dashboard/:path*",
     "/reports/:path*",
+    "/debts/:path*",
     "/products/:path*",
     "/sales/:path*",
     "/purchases/:path*",
