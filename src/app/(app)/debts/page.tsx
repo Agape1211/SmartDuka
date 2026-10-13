@@ -42,6 +42,7 @@ export default function DebtsPage() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submittingId, setSubmittingId] = useState<string | null>(null);
+  const [paymentAmounts, setPaymentAmounts] = useState<Record<string, string>>({});
 
   async function loadDebts() {
     const response = await fetch("/api/debts");
@@ -89,6 +90,19 @@ export default function DebtsPage() {
     }
   }
 
+  function submitPayment(debt: Debt) {
+    const amount = Number(paymentAmounts[debt.id]);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setError(t("Enter a payment amount greater than zero."));
+      return;
+    }
+    if (Math.round(amount * 100) / 100 > Number(debt.outstanding)) {
+      setError(t("Payment cannot be greater than the remaining balance."));
+      return;
+    }
+    recordPayment(debt, amount);
+  }
+
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
@@ -125,8 +139,6 @@ export default function DebtsPage() {
               <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-400">{t("No outstanding customer debts.")}</td></tr>
             )}
             {debts.map((debt) => {
-              const remaining = Number(debt.outstanding);
-              const halfPayment = Math.round(remaining * 50) / 100;
               const busy = submittingId === debt.id;
               return (
                 <tr key={debt.id} className="border-b border-slate-100 last:border-0 align-top">
@@ -164,21 +176,32 @@ export default function DebtsPage() {
                   </td>
                   <td className="px-4 py-3 min-w-40">
                     <div className="flex flex-col gap-2">
-                      <button
-                        type="button"
-                        disabled={busy || halfPayment <= 0}
-                        onClick={() => recordPayment(debt, halfPayment)}
-                        className="rounded-md border border-slate-300 px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-                      >
-                        {t("Pay half")} · {formatTZS(halfPayment)}
-                      </button>
-                      <button
-                        type="button"
+                      <label className="text-xs text-slate-500" htmlFor={`payment-${debt.id}`}>
+                        {t("Amount paid (TZS)")}
+                      </label>
+                      <input
+                        id={`payment-${debt.id}`}
+                        type="number"
+                        min="0.01"
+                        max={debt.outstanding}
+                        step="0.01"
+                        inputMode="decimal"
+                        value={paymentAmounts[debt.id] ?? ""}
+                        onChange={(event) => setPaymentAmounts((current) => ({
+                          ...current,
+                          [debt.id]: event.target.value,
+                        }))}
+                        placeholder={t("Enter amount")}
                         disabled={busy}
-                        onClick={() => recordPayment(debt, remaining)}
+                        className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                      />
+                      <button
+                        type="button"
+                        disabled={busy || !paymentAmounts[debt.id]}
+                        onClick={() => submitPayment(debt)}
                         className="rounded-md bg-brand px-2 py-1.5 text-xs font-medium text-white hover:bg-brand-dark disabled:opacity-50"
                       >
-                        {t("Pay in full")} · {formatTZS(remaining)}
+                        {busy ? t("Recording...") : t("Record payment")}
                       </button>
                     </div>
                   </td>
