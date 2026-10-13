@@ -22,6 +22,18 @@ type Debt = {
   payments: Payment[];
 };
 
+async function readApiResponse(response: Response, fallback: string) {
+  const text = await response.text();
+  let data: { error?: string; debts?: Debt[]; outstanding?: number } = {};
+  try {
+    data = text ? JSON.parse(text) as typeof data : {};
+  } catch {
+    throw new Error(`${fallback} (server returned ${response.status} without valid JSON)`);
+  }
+  if (!response.ok) throw new Error(data.error ?? `${fallback} (HTTP ${response.status})`);
+  return data;
+}
+
 export default function DebtsPage() {
   const { locale, t } = useLanguage();
   const [debts, setDebts] = useState<Debt[]>([]);
@@ -33,8 +45,7 @@ export default function DebtsPage() {
 
   async function loadDebts() {
     const response = await fetch("/api/debts");
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error ?? "Could not load debts");
+    const data = await readApiResponse(response, "Could not load debts");
     setDebts(data.debts ?? []);
     setOutstanding(Number(data.outstanding ?? 0));
   }
@@ -43,8 +54,7 @@ export default function DebtsPage() {
     let active = true;
     fetch("/api/debts")
       .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error ?? "Could not load debts");
+        const data = await readApiResponse(response, "Could not load debts");
         if (active) {
           setDebts(data.debts ?? []);
           setOutstanding(Number(data.outstanding ?? 0));
@@ -69,8 +79,7 @@ export default function DebtsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount }),
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "Could not record payment");
+      await readApiResponse(response, "Could not record payment");
       setNotice(`${t("Payment recorded")} · TZS ${formatTZS(amount)} · ${debt.customer_name || t("customer")}.`);
       await loadDebts();
     } catch (paymentError) {

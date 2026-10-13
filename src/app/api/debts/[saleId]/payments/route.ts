@@ -76,8 +76,18 @@ export async function POST(
     await client.query("COMMIT");
     return NextResponse.json({ amountPaid: newAmountPaid, outstanding: newOutstanding });
   } catch (err) {
-    await client.query("ROLLBACK");
-    throw err;
+    await client.query("ROLLBACK").catch(() => undefined);
+    const code = typeof err === "object" && err !== null && "code" in err
+      ? err.code
+      : undefined;
+    if (code === "42P01") {
+      return NextResponse.json(
+        { error: "Debt payments are not set up yet. Apply db/migrations/20261013_sales_payments.sql to the database." },
+        { status: 503 }
+      );
+    }
+    console.error("Failed to record customer debt payment", err);
+    return NextResponse.json({ error: "Could not record payment. Please try again." }, { status: 500 });
   } finally {
     client.release();
   }

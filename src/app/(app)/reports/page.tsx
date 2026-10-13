@@ -19,6 +19,21 @@ type ReportData = {
   totals: { revenue: string; profit: string; saleCount: number; creditOutstanding: string };
 };
 
+async function parseReportResponse(response: Response): Promise<ReportData> {
+  const text = await response.text();
+  let payload: Partial<ReportData> & { error?: string };
+  try {
+    payload = text ? JSON.parse(text) as Partial<ReportData> & { error?: string } : {};
+  } catch {
+    throw new Error(`Report request failed (HTTP ${response.status})`);
+  }
+  if (!response.ok) throw new Error(payload.error ?? `Report request failed (HTTP ${response.status})`);
+  if (!Array.isArray(payload.sales) || !payload.totals) {
+    throw new Error("The report response was incomplete. Please refresh and try again.");
+  }
+  return payload as ReportData;
+}
+
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -33,21 +48,43 @@ export default function ReportsPage() {
   const [month, setMonth] = useState(monthStr());
   const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [refreshToken, setRefreshToken] = useState(0);
 
   useEffect(() => {
     let active = true;
+    const controller = new AbortController();
     const task = window.setTimeout(() => {
       setLoading(true);
-      const params = mode === "daily" ? `date=${date}` : `month=${month}`;
-      fetch(`/api/reports/${mode}?${params}`)
-        .then((r) => r.json())
-        .then((d) => {
-          if (active) { setData(d); setLoading(false); }
+      setError(null);
+      const params = new URLSearchParams(
+        mode === "daily" ? { date } : { month }
+      );
+      fetch(`/api/reports/${mode}?${params.toString()}`, {
+        cache: "no-store",
+        signal: controller.signal,
+      })
+        .then(parseReportResponse)
+        .then((report) => {
+          if (active) {
+            setData(report);
+            setLastUpdated(new Date());
+          }
         })
-        .catch(() => { if (active) setLoading(false); });
+        .catch((fetchError: unknown) => {
+          if (active && !(fetchError instanceof DOMException && fetchError.name === "AbortError")) {
+            setError(fetchError instanceof Error ? fetchError.message : "Could not load report data.");
+          }
+        })
+        .finally(() => { if (active) setLoading(false); });
     }, 0);
-    return () => { active = false; window.clearTimeout(task); };
-  }, [mode, date, month]);
+    return () => {
+      active = false;
+      window.clearTimeout(task);
+      controller.abort();
+    };
+  }, [mode, date, month, refreshToken]);
 
   function exportUrl(format: "csv" | "pdf") {
     const params =
@@ -94,6 +131,15 @@ export default function ReportsPage() {
           />
         )}
 
+        <button
+          type="button"
+          onClick={() => setRefreshToken((token) => token + 1)}
+          disabled={loading}
+          className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+        >
+          {loading ? "Updating..." : "Refresh"}
+        </button>
+
         <div className="flex-1" />
 
         <a
@@ -108,6 +154,13 @@ export default function ReportsPage() {
         >
           Export PDF
         </a>
+      </div>
+
+      <div className="mb-4 min-h-5 text-xs">
+        {error && <p role="alert" className="text-red-700">{error}</p>}
+        {!error && lastUpdated && (
+          <p className="text-slate-500">Updated {lastUpdated.toLocaleTimeString(locale === "sw" ? "sw-TZ" : "en-TZ", { hour: "2-digit", minute: "2-digit" })}</p>
+        )}
       </div>
 
       {/* Totals */}
@@ -145,6 +198,13 @@ export default function ReportsPage() {
               <tr>
                 <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
                   No sales recorded for this period.
+                </td>
+              </tr>
+            )}
+            {!loading && !data && error && (
+              <tr>
+                <td colSpan={5} className="px-4 py-6 text-center text-red-600">
+                  Report data could not be loaded. Use Refresh to try again.
                 </td>
               </tr>
             )}
