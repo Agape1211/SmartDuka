@@ -43,7 +43,13 @@ export function MarketingFooter() {
         <p>© {new Date().getFullYear()} DukaSmart. {locale === "sw" ? "Jua biashara yako." : "Jua biashara yako."}</p>
         <nav aria-label={locale === "sw" ? "Viungo vya chini ya ukurasa" : "Footer navigation"} className="flex flex-wrap justify-center gap-x-5 gap-y-2">
           {footerLinks.map((link) => <Link key={link.href} href={link.href} className="font-medium hover:text-brand-dark">{t(link.label)}</Link>)}
-          <a href="https://www.instagram.com/dukasmart23/" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-brand-dark">Instagram @dukasmart23</a>
+          <a href="https://www.instagram.com/dukasmart23/" target="_blank" rel="noopener noreferrer" aria-label="DukaSmart on Instagram: @dukasmart23" title="Instagram @dukasmart23" className="inline-flex size-6 items-center justify-center text-slate-500 transition hover:text-brand-dark">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="size-5" stroke="currentColor" strokeWidth="1.8">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
         </nav>
       </div>
     </footer>
