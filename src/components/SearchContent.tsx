@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Script from "next/script";
 import { MarketingPage } from "@/components/MarketingLayout";
 import type { Article, SearchPage } from "@/lib/seo-content";
 
@@ -108,6 +109,7 @@ export function ArticlePage({ article }: { article: Article }) {
   };
   return (
     <>
+      <AdsenseScript />
       <StructuredData value={structuredData} />
       <MarketingPage eyebrow={`Knowledge hub / ${article.category}`} title={article.title} intro={article.intro}>
         <Breadcrumbs items={crumbs} />
@@ -147,4 +149,103 @@ export function ContentIndex({ title, intro, pages }: { title: string; intro: st
       </MarketingPage>
     </>
   );
+}
+
+function AdsenseScript() {
+  const clientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  if (!clientId || !/^ca-pub-\d+$/.test(clientId)) return null;
+
+  return (
+    <Script
+      async
+      strategy="afterInteractive"
+      crossOrigin="anonymous"
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${clientId}`}
+    />
+  );
+}
+
+export function BlogIndex({ articles }: { articles: Article[] }) {
+  const categories = [...new Set(articles.map((article) => article.category))];
+  const latestArticles = [...articles].sort((first, second) => second.published.localeCompare(first.published));
+  const featuredArticle = latestArticles[0];
+  const otherArticles = latestArticles.slice(1);
+  const crumbs = [{ label: "Home", href: "/" }, { label: "Knowledge hub", href: "/blog" }];
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "DukaSmart Knowledge Hub",
+    description: "Practical guides to stock control, sales, credit, and running a small retail shop in Tanzania.",
+    url: new URL("/blog", siteOrigin).toString(),
+    blogPost: latestArticles.map((article) => ({
+      "@type": "BlogPosting",
+      headline: article.title,
+      description: article.description,
+      datePublished: article.published,
+      url: new URL(`/blog/${article.slug}`, siteOrigin).toString(),
+    })),
+  };
+
+  return (
+    <>
+      <AdsenseScript />
+      <StructuredData value={structuredData} />
+      <MarketingPage eyebrow="The DukaSmart journal" title="A better-run shop starts with a good idea." intro="Field-tested, straightforward advice for the people keeping Tanzania's shops moving: from everyday stock habits to smarter sales and cash decisions.">
+          <Breadcrumbs items={crumbs} />
+          <div className="mb-10 flex flex-wrap gap-2" aria-label="Article categories">
+            {categories.map((category) => <span key={category} className="border border-teal-200 bg-white px-3 py-1.5 text-sm font-semibold text-brand-dark">{category}</span>)}
+          </div>
+          {featuredArticle && (
+            <section aria-labelledby="featured-article" className="border-y border-teal-200 py-8 sm:py-10">
+              <p className="text-sm font-bold uppercase tracking-[0.12em] text-brand-dark">Latest guide · {featuredArticle.category}</p>
+              <h2 id="featured-article" className="mt-3 max-w-3xl text-3xl font-bold leading-tight text-slate-950 sm:text-4xl">
+                <Link href={`/blog/${featuredArticle.slug}`} className="hover:text-brand-dark">{featuredArticle.title}</Link>
+              </h2>
+              <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">{featuredArticle.description}</p>
+              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500">
+                <time dateTime={featuredArticle.published}>{formatArticleDate(featuredArticle.published)}</time>
+                <span>·</span><span>{estimateReadingTime(featuredArticle)} min read</span>
+                <Link href={`/blog/${featuredArticle.slug}`} className="font-bold text-brand-dark underline decoration-teal-300 underline-offset-4">Read the guide <span aria-hidden="true">→</span></Link>
+              </div>
+            </section>
+          )}
+          <section aria-labelledby="more-guides" className="pt-10">
+            <div className="flex flex-wrap items-end justify-between gap-3 border-b border-slate-200 pb-4">
+              <h2 id="more-guides" className="text-2xl font-bold text-slate-950">More practical guides</h2>
+              <span className="text-sm text-slate-500">{articles.length} articles</span>
+            </div>
+            <ul className="divide-y divide-slate-200">
+              {otherArticles.map((article) => (
+                <li key={article.slug} className="py-6">
+                  <article>
+                    <p className="text-sm font-semibold text-brand-dark">{article.category} <span className="px-1 text-slate-400">·</span> <time dateTime={article.published}>{formatArticleDate(article.published)}</time></p>
+                    <h3 className="mt-2 text-xl font-bold text-slate-950"><Link href={`/blog/${article.slug}`} className="hover:text-brand-dark">{article.title} <span aria-hidden="true">→</span></Link></h3>
+                    <p className="mt-2 max-w-3xl leading-7 text-slate-600">{article.description}</p>
+                    <p className="mt-2 text-sm text-slate-500">{estimateReadingTime(article)} min read</p>
+                  </article>
+                </li>
+              ))}
+            </ul>
+          </section>
+          <section className="mt-10 border-t border-slate-200 pt-8">
+            <h2 className="text-xl font-bold text-slate-950">Put the ideas to work</h2>
+            <p className="mt-2 leading-7 text-slate-600">Try the free stock and profit calculators, or see how DukaSmart brings everyday shop records together.</p>
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 text-sm font-bold text-brand-dark">
+              <Link href="/tools/stock-calculator" className="underline decoration-teal-300 underline-offset-4">Stock reorder calculator →</Link>
+              <Link href="/tools/profit-calculator" className="underline decoration-teal-300 underline-offset-4">Shop profit calculator →</Link>
+              <Link href="/features/inventory-management" className="underline decoration-teal-300 underline-offset-4">Inventory management →</Link>
+            </div>
+          </section>
+      </MarketingPage>
+    </>
+  );
+}
+
+function formatArticleDate(date: string) {
+  return new Date(`${date}T12:00:00Z`).toLocaleDateString("en-TZ", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function estimateReadingTime(article: Article) {
+  const wordCount = [article.intro, ...article.sections.map((section) => `${section.heading} ${section.body}`)].join(" ").split(/\s+/).length;
+  return Math.max(1, Math.ceil(wordCount / 220));
 }
