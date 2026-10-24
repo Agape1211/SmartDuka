@@ -14,6 +14,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/purchases", label: "Purchases" },
   { href: "/debts", label: "Customer debts", ownerOnly: true },
   { href: "/reports", label: "Reports", ownerOnly: true },
+  { href: "/settings", label: "Settings", ownerOnly: true },
 ];
 
 export function AppShell({

@@ -8,7 +8,6 @@ const bodySchema = z.object({
   name: z.string().trim().min(2).max(120),
   email: z.string().trim().max(254).optional().or(z.literal("")),
   password: z.string().min(10).max(128),
-  role: z.enum(["OWNER", "EMPLOYEE"]).default("EMPLOYEE"),
 });
 
 function buildFallbackEmail(name: string) {
@@ -27,7 +26,8 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
-  const { name, password, role } = parsed.data;
+  const { name, password } = parsed.data;
+  const role = "EMPLOYEE" as const;
   const email = parsed.data.email?.trim() ? parsed.data.email.trim().toLowerCase() : buildFallbackEmail(name);
 
   const existing = await query(`SELECT id FROM users WHERE email = $1`, [

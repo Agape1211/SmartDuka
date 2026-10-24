@@ -17,7 +17,7 @@ export async function getSession(): Promise<SessionPayload | null> {
 
   const result = await query<SessionPayload>(
     `SELECT id AS "userId", shop_id AS "shopId", role, name, email
-     FROM users WHERE auth_user_id = $1 LIMIT 1`,
+     FROM users WHERE auth_user_id = $1 AND is_active = TRUE LIMIT 1`,
     [data.user.id]
   );
   return result.rows[0] ?? null;

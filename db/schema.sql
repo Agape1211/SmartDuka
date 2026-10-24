@@ -19,6 +19,7 @@ CREATE TABLE users (
   email         TEXT NOT NULL UNIQUE,
   password_hash TEXT,
   role          role NOT NULL DEFAULT 'EMPLOYEE',
+  is_active     BOOLEAN NOT NULL DEFAULT TRUE,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE UNIQUE INDEX idx_users_auth_user_id
