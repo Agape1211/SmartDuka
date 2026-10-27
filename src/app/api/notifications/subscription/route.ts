@@ -7,8 +7,9 @@ export const runtime = "nodejs";
 
 function isMissingLocaleColumn(error: unknown) {
   if (!error || typeof error !== "object") return false;
-  const databaseError = error as { code?: unknown; column?: unknown };
-  return databaseError.code === "42703" && databaseError.column === "locale";
+  const databaseError = error as { code?: unknown; column?: unknown; table?: unknown };
+  return (databaseError.code === "42703" && databaseError.column === "locale") ||
+    (databaseError.code === "42P01" && databaseError.table === "push_subscriptions");
 }
 
 const subscriptionSchema = z.object({

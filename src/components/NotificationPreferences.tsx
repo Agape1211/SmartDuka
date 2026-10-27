@@ -95,7 +95,15 @@ export function NotificationPreferences({ compact = false }: { compact?: boolean
       if (!response.ok) {
         const serverError = result?.error === "Push notifications are not configured"
           ? t("Push notifications are not configured.")
-          : t("Could not enable notifications. Try again.");
+          : result?.error === "Notification language setup is incomplete. Please contact the administrator."
+            ? t(result.error)
+            : response.status === 401
+              ? t("Your session expired. Sign in again, then enable notifications.")
+              : response.status === 403
+                ? t("Open DukaSmart from its usual web address, then try again.")
+                : response.status === 400
+                  ? t("The browser returned an invalid notification subscription. Reload the app and try again.")
+                  : `${t("Could not save notification settings. Check the server logs.")} (HTTP ${response.status})`;
         throw new Error(serverError);
       }
 
