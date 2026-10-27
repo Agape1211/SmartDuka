@@ -11,6 +11,7 @@ const subscriptionSchema = z.object({
     p256dh: z.string().min(20).max(256),
     auth: z.string().min(10).max(128),
   }),
+  locale: z.enum(["en", "sw"]).default("en"),
 });
 
 function hasTrustedOrigin(request: NextRequest) {
@@ -54,13 +55,14 @@ export async function POST(request: NextRequest) {
       [parsed.data.endpoint, session.userId, session.shopId]
     );
     await client.query(
-      `INSERT INTO push_subscriptions (user_id, shop_id, endpoint, p256dh_key, auth_key)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO push_subscriptions (user_id, shop_id, endpoint, p256dh_key, auth_key, locale)
+       VALUES ($1, $2, $3, $4, $5, $6)
        ON CONFLICT (endpoint) DO UPDATE SET
          p256dh_key = EXCLUDED.p256dh_key,
          auth_key = EXCLUDED.auth_key,
+         locale = EXCLUDED.locale,
          updated_at = now()`,
-      [session.userId, session.shopId, parsed.data.endpoint, parsed.data.keys.p256dh, parsed.data.keys.auth]
+      [session.userId, session.shopId, parsed.data.endpoint, parsed.data.keys.p256dh, parsed.data.keys.auth, parsed.data.locale]
     );
     await client.query("COMMIT");
   } catch (error) {

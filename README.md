@@ -42,7 +42,8 @@ PostgreSQL.
    `db/migrations/20261013_sales_payments.sql` to enable customer debt payments,
    followed by `db/migrations/20261024_employee_management.sql` to enable
    employee management, then `db/migrations/20261027_web_push_notifications.sql`
-   to enable push notifications. Existing users remain active after the
+   and `db/migrations/20261028_push_notification_language.sql` to enable
+   multilingual push notifications. Existing users remain active after the
    employee migration.
 
 4. **GitHub versioning.** The app shows the live version from the GitHub tag
@@ -71,7 +72,9 @@ PostgreSQL.
    They can sign in with their current password once; that first successful
    login links their profile to Supabase Auth.
    Apply `db/migrations/20261027_web_push_notifications.sql` to enable browser
-   push notifications.
+   push notifications, then apply
+   `db/migrations/20261028_push_notification_language.sql` to store each
+   device's selected notification language.
 
 2. **Copy the database connection string.** In Supabase, open **Connect** and
    select the **Transaction pooler** connection string. It is intended for

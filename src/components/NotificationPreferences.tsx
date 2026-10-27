@@ -10,8 +10,25 @@ function decodeVapidKey(base64Key: string) {
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
+function waitForActiveServiceWorker(scope: string, timeoutMessage: string, notReadyMessage: string) {
+  let timeoutId: number | undefined;
+  const activation = navigator.serviceWorker.ready.then((registration) => {
+    if (registration.scope !== scope || !registration.active) {
+      throw new Error(notReadyMessage);
+    }
+    return registration;
+  });
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = window.setTimeout(() => reject(new Error(timeoutMessage)), 15_000);
+  });
+
+  return Promise.race([activation, timeout]).finally(() => {
+    if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+  });
+}
+
 export function NotificationPreferences({ compact = false }: { compact?: boolean }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [enabled, setEnabled] = useState(false);
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState("");
@@ -21,8 +38,16 @@ export function NotificationPreferences({ compact = false }: { compact?: boolean
     void navigator.serviceWorker.getRegistration("/").then(async (registration) => {
       const subscription = await registration?.pushManager.getSubscription();
       setEnabled(Boolean(subscription) && Notification.permission === "granted");
+      if (subscription && Notification.permission === "granted") {
+        const response = await fetch("/api/notifications/subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...subscription.toJSON(), locale }),
+        });
+        if (!response.ok) setMessage(t("Could not sync notification language."));
+      }
     }).catch(() => setMessage(t("Could not check notification status.")));
-  }, [t]);
+  }, [locale, t]);
 
   async function enableNotifications() {
     setWorking(true);
@@ -44,8 +69,14 @@ export function NotificationPreferences({ compact = false }: { compact?: boolean
       if (permission !== "granted") throw new Error(t("Allow notifications in your browser settings, then try again."));
 
       const registration = await navigator.serviceWorker.register("/sw.js");
-      let subscription = await registration.pushManager.getSubscription();
-      subscription ??= await registration.pushManager.subscribe({
+      const activeRegistration = await waitForActiveServiceWorker(
+        registration.scope,
+        t("The notification service is still starting. Please try again."),
+        t("The notification service is not ready. Please try again."),
+      );
+
+      let subscription = await activeRegistration.pushManager.getSubscription();
+      subscription ??= await activeRegistration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: decodeVapidKey(publicKey) as BufferSource,
       });
@@ -53,10 +84,15 @@ export function NotificationPreferences({ compact = false }: { compact?: boolean
       const response = await fetch("/api/notifications/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(subscription.toJSON()),
+        body: JSON.stringify({ ...subscription.toJSON(), locale }),
       });
       const result = await response.json().catch(() => null);
-      if (!response.ok) throw new Error(result?.error ?? t("Could not enable notifications. Try again."));
+      if (!response.ok) {
+        const serverError = result?.error === "Push notifications are not configured"
+          ? t("Push notifications are not configured.")
+          : t("Could not enable notifications. Try again.");
+        throw new Error(serverError);
+      }
 
       setEnabled(true);
       setMessage(t("Notifications are enabled on this device."));

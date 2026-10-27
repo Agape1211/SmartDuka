@@ -4,7 +4,7 @@ import Link from "next/link";
 import { BrandAvatar } from "@/components/BrandAvatar";
 import { InstallAppButton } from "@/components/InstallAppButton";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
-import { LocalizedContent, useLanguage } from "@/components/LanguageProvider";
+import { LanguageSwitcher, LocalizedContent, useLanguage } from "@/components/LanguageProvider";
 import { usePathname, useRouter } from "next/navigation";
 
 type NavItem = { href: string; label: string; ownerOnly?: boolean };
@@ -91,6 +91,9 @@ export function AppShell({
           <NotificationPreferences />
         </div>
         <div className="mb-4">
+          <LanguageSwitcher />
+        </div>
+        <div className="mb-4">
           <InstallAppButton />
         </div>
         <div className="pt-4 border-t border-white/10">
@@ -113,6 +116,7 @@ export function AppShell({
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex justify-start overflow-x-auto py-2 z-10">
         <InstallAppButton compact />
         <NotificationPreferences compact />
+        <LanguageSwitcher />
         {items.map((item) => (
           <Link
             key={item.href}

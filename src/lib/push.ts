@@ -7,6 +7,7 @@ type SubscriptionRow = {
   endpoint: string;
   p256dh_key: string;
   auth_key: string;
+  locale: "en" | "sw";
 };
 
 type LowStockEvent = {
@@ -151,7 +152,7 @@ export async function deliverPendingLowStockPushes(shopId?: string) {
         [event.id, event.shop_id]
       );
       const subscriptions = await client.query<SubscriptionRow & { subscription_id: string }>(
-        `SELECT d.subscription_id AS id, ps.endpoint, ps.p256dh_key, ps.auth_key
+        `SELECT d.subscription_id AS id, ps.endpoint, ps.p256dh_key, ps.auth_key, ps.locale
          FROM low_stock_notification_deliveries d
          JOIN push_subscriptions ps ON ps.id = d.subscription_id
          WHERE d.event_id = $1 AND d.delivered_at IS NULL`,
@@ -165,8 +166,10 @@ export async function deliverPendingLowStockPushes(shopId?: string) {
             client,
             subscription,
             {
-              title: "DukaSmart · Low stock",
-              body: `${event.product_name.slice(0, 100)}: ${event.stock} left (alert at ${event.low_stock_at}).`,
+              title: subscription.locale === "sw" ? "DukaSmart · Tahadhari ya stoku" : "DukaSmart · Low stock",
+              body: subscription.locale === "sw"
+                ? `Bidhaa ${event.product_name.slice(0, 100)}: stoku ni ${event.stock} (kiwango cha tahadhari: ${event.low_stock_at}).`
+                : `${event.product_name.slice(0, 100)}: ${event.stock} left (alert at ${event.low_stock_at}).`,
               url: "/products?lowStockOnly=1",
               tag: `low-stock-${event.id}`,
             },
@@ -237,7 +240,7 @@ export async function sendDailyPushReminders() {
       [localDate]
     );
     const reminders = await client.query<SubscriptionRow & { subscription_id: string; user_name: string }>(
-      `SELECT d.subscription_id AS id, ps.endpoint, ps.p256dh_key, ps.auth_key, u.name AS user_name
+      `SELECT d.subscription_id AS id, ps.endpoint, ps.p256dh_key, ps.auth_key, ps.locale, u.name AS user_name
        FROM daily_push_deliveries d
        JOIN push_subscriptions ps ON ps.id = d.subscription_id
        JOIN users u ON u.id = ps.user_id AND u.is_active = TRUE
@@ -252,8 +255,10 @@ export async function sendDailyPushReminders() {
           client,
           subscription,
           {
-            title: "Good morning from DukaSmart",
-            body: `Have a great day, ${subscription.user_name.slice(0, 80)}. Remember to record today's sales, purchases, and stock changes.`,
+            title: subscription.locale === "sw" ? "Habari za asubuhi kutoka DukaSmart" : "Good morning from DukaSmart",
+            body: subscription.locale === "sw"
+              ? `Uwe na siku njema, ${subscription.user_name.slice(0, 80)}. Kumbuka kurekodi mauzo ya leo, manunuzi na mabadiliko ya stoku.`
+              : `Have a great day, ${subscription.user_name.slice(0, 80)}. Remember to record today's sales, purchases, and stock changes.`,
             url: "/dashboard",
             tag: `daily-reminder-${localDate}`,
           },

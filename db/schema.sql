@@ -49,6 +49,7 @@ CREATE TABLE push_subscriptions (
   endpoint    TEXT NOT NULL UNIQUE,
   p256dh_key  TEXT NOT NULL,
   auth_key    TEXT NOT NULL,
+  locale      TEXT NOT NULL DEFAULT 'en' CHECK (locale IN ('en', 'sw')),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
