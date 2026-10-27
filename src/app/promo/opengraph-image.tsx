@@ -43,7 +43,7 @@ export default function PromoOpenGraphImage() {
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", maxWidth: 930 }}>
-          <div style={{ fontSize: 68, lineHeight: 1.04, fontWeight: 800, letterSpacing: -2 }}>
+          <div style={{ display: "flex", fontSize: 68, lineHeight: 1.04, fontWeight: 800, letterSpacing: -2 }}>
             Run your shop with <span style={{ color: "#fcd34d" }}>clarity.</span>
           </div>
           <div style={{ marginTop: 24, fontSize: 28, lineHeight: 1.35, color: "#e6fffb" }}>
