@@ -7,9 +7,14 @@ export const runtime = "nodejs";
 
 function isMissingLocaleColumn(error: unknown) {
   if (!error || typeof error !== "object") return false;
-  const databaseError = error as { code?: unknown; column?: unknown; table?: unknown };
-  return (databaseError.code === "42703" && databaseError.column === "locale") ||
-    (databaseError.code === "42P01" && databaseError.table === "push_subscriptions");
+  const databaseError = error as { code?: unknown; column?: unknown; table?: unknown; message?: unknown };
+  const missingLocale = databaseError.code === "42703" && (
+    databaseError.column === "locale" ||
+    (typeof databaseError.message === "string" &&
+      databaseError.message.includes('column "locale" of relation "push_subscriptions" does not exist'))
+  );
+  return missingLocale ||
+    databaseError.code === "42P01";
 }
 
 const subscriptionSchema = z.object({
