@@ -12,7 +12,7 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "DukaSmart",
   url: siteUrl,
-  sameAs: ["https://www.instagram.com/dukasmart23/"],
+  sameAs: ["https://www.instagram.com/dukasmart.online/"],
 };
 
 export const metadata: Metadata = {

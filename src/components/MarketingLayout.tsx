@@ -42,7 +42,7 @@ export function MarketingFooter() {
       <div className="mx-auto max-w-7xl px-5 py-7 sm:px-8">
         <div className="flex items-center justify-between gap-4 text-sm text-slate-500">
           <p>© {new Date().getFullYear()} DukaSmart. {locale === "sw" ? "Jua biashara yako." : "Jua biashara yako."}</p>
-          <a href="https://www.instagram.com/dukasmart23/" target="_blank" rel="noopener noreferrer" aria-label="DukaSmart on Instagram: @dukasmart23" title="Instagram @dukasmart23" className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg transition hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
+          <a href="https://www.instagram.com/dukasmart.online/" target="_blank" rel="noopener noreferrer" aria-label="DukaSmart on Instagram: @dukasmart.online" title="Instagram @dukasmart.online" className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg transition hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
             <svg aria-hidden="true" viewBox="0 0 24 24" className="size-8">
               <defs>
                 <linearGradient id="instagram-gradient" x1="0" y1="24" x2="24" y2="0" gradientUnits="userSpaceOnUse">
