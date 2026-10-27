@@ -5,6 +5,12 @@ import { getSession } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
+function isMissingLocaleColumn(error: unknown) {
+  if (!error || typeof error !== "object") return false;
+  const databaseError = error as { code?: unknown; column?: unknown };
+  return databaseError.code === "42703" && databaseError.column === "locale";
+}
+
 const subscriptionSchema = z.object({
   endpoint: z.string().url().max(2000),
   keys: z.object({
@@ -67,6 +73,14 @@ export async function POST(request: NextRequest) {
     await client.query("COMMIT");
   } catch (error) {
     await client.query("ROLLBACK").catch(() => undefined);
+    if (isMissingLocaleColumn(error)) {
+      console.error("Push subscription locale column is missing; apply pending push notification migrations.");
+      return NextResponse.json(
+        { error: "Notification language setup is incomplete. Please contact the administrator." },
+        { status: 503 }
+      );
+    }
+    console.error("Unable to save push notification subscription", error);
     throw error;
   } finally {
     client.release();

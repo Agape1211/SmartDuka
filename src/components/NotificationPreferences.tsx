@@ -44,7 +44,12 @@ export function NotificationPreferences({ compact = false }: { compact?: boolean
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...subscription.toJSON(), locale }),
         });
-        if (!response.ok) setMessage(t("Could not sync notification language."));
+        if (!response.ok) {
+          const result = await response.json().catch(() => null);
+          setMessage(result?.error === "Notification language setup is incomplete. Please contact the administrator."
+            ? t(result.error)
+            : t("Could not sync notification language."));
+        }
       }
     }).catch(() => setMessage(t("Could not check notification status.")));
   }, [locale, t]);

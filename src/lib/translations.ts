@@ -651,6 +651,7 @@ const sw: Dictionary = {
   "Push notifications are not configured yet.": "Arifa za moja kwa moja bado hazijawekwa.",
   "Push notifications are not configured.": "Arifa za moja kwa moja hazijawekwa.",
   "Could not sync notification language.": "Imeshindikana kusasisha lugha ya arifa.",
+  "Notification language setup is incomplete. Please contact the administrator.": "Mipangilio ya lugha ya arifa haijakamilika. Tafadhali wasiliana na msimamizi.",
   "The notification service is still starting. Please try again.": "Huduma ya arifa bado inaanza. Tafadhali jaribu tena.",
   "The notification service is not ready. Please try again.": "Huduma ya arifa bado haiko tayari. Tafadhali jaribu tena.",
   "Allow notifications in your browser settings, then try again.": "Ruhusu arifa kwenye mipangilio ya kivinjari kisha ujaribu tena.",
