@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
   const { paymentStatus, customerName, customerPhone, items } = parsed.data;
 
   const client = await pool.connect();
+  let createdSale: { id: string; total: number; createdAt: Date } | undefined;
   try {
     await client.query("BEGIN");
 
@@ -130,15 +131,15 @@ export async function POST(req: NextRequest) {
     }
 
     await client.query("COMMIT");
-    await deliverPendingLowStockPushes(session.shopId);
-    return NextResponse.json(
-      { sale: { id: saleId, total, createdAt: saleResult.rows[0].created_at } },
-      { status: 201 }
-    );
+    createdSale = { id: saleId, total, createdAt: saleResult.rows[0].created_at };
   } catch (err) {
     await client.query("ROLLBACK");
     throw err;
   } finally {
     client.release();
   }
+
+  if (!createdSale) throw new Error("Sale completed without a result");
+  await deliverPendingLowStockPushes(session.shopId);
+  return NextResponse.json({ sale: createdSale }, { status: 201 });
 }

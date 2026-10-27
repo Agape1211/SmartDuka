@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
   const { supplier, items } = parsed.data;
 
   const client = await pool.connect();
+  let createdPurchase: { id: string; total: number; createdAt: Date } | undefined;
   try {
     await client.query("BEGIN");
 
@@ -109,15 +110,15 @@ export async function POST(req: NextRequest) {
     }
 
     await client.query("COMMIT");
-    await deliverPendingLowStockPushes(session.shopId);
-    return NextResponse.json(
-      { purchase: { id: purchaseId, total, createdAt: purchaseResult.rows[0].created_at } },
-      { status: 201 }
-    );
+    createdPurchase = { id: purchaseId, total, createdAt: purchaseResult.rows[0].created_at };
   } catch (err) {
     await client.query("ROLLBACK");
     throw err;
   } finally {
     client.release();
   }
+
+  if (!createdPurchase) throw new Error("Purchase completed without a result");
+  await deliverPendingLowStockPushes(session.shopId);
+  return NextResponse.json({ purchase: createdPurchase }, { status: 201 });
 }
