@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/components/LanguageProvider";
@@ -24,6 +24,11 @@ export const metadata: Metadata = {
   description:
     "DukaSmart helps Tanzanian SMEs improve operations through practical implementation, automation, analytics, support, and shop software for sales, stock, purchases, and reports.",
   applicationName: "DukaSmart",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "DukaSmart",
+  },
   robots: {
     index: true,
     follow: true,
@@ -74,6 +79,12 @@ export const metadata: Metadata = {
       ? { google: process.env.GOOGLE_SITE_VERIFICATION }
       : {}),
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0f766e",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

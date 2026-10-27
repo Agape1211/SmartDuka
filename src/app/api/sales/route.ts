@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { pool, query } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { deliverPendingLowStockPushes } from "@/lib/push";
+
+export const maxDuration = 60;
 
 // GET /api/sales?limit=20 — recent sales for this shop
 export async function GET(req: NextRequest) {
@@ -127,6 +130,7 @@ export async function POST(req: NextRequest) {
     }
 
     await client.query("COMMIT");
+    await deliverPendingLowStockPushes(session.shopId);
     return NextResponse.json(
       { sale: { id: saleId, total, createdAt: saleResult.rows[0].created_at } },
       { status: 201 }

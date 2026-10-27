@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { query } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { deliverPendingLowStockPushes } from "@/lib/push";
+
+export const maxDuration = 60;
 
 async function getOwnedProduct(id: string, shopId: string) {
   const result = await query(`SELECT * FROM products WHERE id = $1 AND shop_id = $2`, [
@@ -60,6 +63,8 @@ export async function PUT(
      RETURNING id, name, category, unit, cost_price, sell_price, stock, low_stock_at`,
     [p.name, p.category, p.unit, p.costPrice, p.sellPrice, p.stock, p.lowStockAt, id, session.shopId]
   );
+
+  await deliverPendingLowStockPushes(session.shopId);
 
   return NextResponse.json({ product: result.rows[0] });
 }

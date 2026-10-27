@@ -39,7 +39,11 @@ PostgreSQL.
 3. **Create or update the schema.** Run `db/schema.sql` for a new database. For
    an existing database, apply pending migrations in order. If it predates
    Supabase Auth, first run `db/migrations/20260928_supabase_auth.sql`, then
-   `db/migrations/20261013_sales_payments.sql` to enable customer debt payments.
+   `db/migrations/20261013_sales_payments.sql` to enable customer debt payments,
+   followed by `db/migrations/20261024_employee_management.sql` to enable
+   employee management, then `db/migrations/20261027_web_push_notifications.sql`
+   to enable push notifications. Existing users remain active after the
+   employee migration.
 
 4. **GitHub versioning.** The app shows the live version from the GitHub tag
    release. Every push to `main` creates or bumps a `vX.Y.Z` tag and GitHub
@@ -61,9 +65,13 @@ PostgreSQL.
    DukaSmart database, apply pending migrations in order. If it predates
    Supabase Auth, first run `db/migrations/20260928_supabase_auth.sql`, then
    run `db/migrations/20261013_sales_payments.sql` to add customer payment
-   history and partial/full debt settlement. Existing users can sign in with
-   their current password once; that first successful login links their
-   profile to Supabase Auth.
+   history and partial/full debt settlement, followed by
+   `db/migrations/20261024_employee_management.sql` to enable employee
+   management. Existing users remain active after the employee migration.
+   They can sign in with their current password once; that first successful
+   login links their profile to Supabase Auth.
+   Apply `db/migrations/20261027_web_push_notifications.sql` to enable browser
+   push notifications.
 
 2. **Copy the database connection string.** In Supabase, open **Connect** and
    select the **Transaction pooler** connection string. It is intended for
@@ -85,10 +93,23 @@ PostgreSQL.
    | `SUPABASE_SECRET_KEY` | Supabase secret key; server-only |
    | `NEXT_PUBLIC_SITE_URL` | Canonical production origin, e.g. `https://dukasmart.online` (no trailing slash) |
    | `GOOGLE_SITE_VERIFICATION` | Optional Google Search Console HTML-tag verification value; alternatively, use the existing verification HTML file in `public/` |
+   | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Public Web Push application server key |
+   | `VAPID_PRIVATE_KEY` | Private Web Push key; server-only secret |
+   | `VAPID_SUBJECT` | Contact URI for push services, e.g. `mailto:info.dukasmart@gmail.com` |
+   | `CRON_SECRET` | Random secret (at least 16 characters) securing the daily reminder job |
 
    Do not include quotation marks around the values in Vercel. Keep
    production and preview databases separate where possible. Never expose or
    commit the service-role key.
+
+   Generate a VAPID key pair once with
+   `node -e 'console.log(JSON.stringify(require("web-push").generateVAPIDKeys(), null, 2))'`.
+   Put its `publicKey` in `NEXT_PUBLIC_VAPID_PUBLIC_KEY` and its `privateKey` in
+   `VAPID_PRIVATE_KEY`. Keep the private key stable and secret. The daily push
+   reminder runs at 05:00 UTC (about 8:00–9:00 AM in Tanzania on Vercel Hobby;
+   Hobby scheduling may vary by up to an hour). Low-stock pushes are sent after
+   a stock change crosses the configured threshold. Configure the public key
+   before deployment because Next.js includes it in the browser bundle.
 
 4. **Connect your domain and enable indexing.** Add the purchased domain to the Vercel project and configure the DNS records Vercel provides. Once HTTPS works on the preferred host, set `NEXT_PUBLIC_SITE_URL` to that exact origin (for example `https://dukasmart.online`, without a trailing slash) in Vercel's Production Environment Variables, then redeploy. Use one preferred host and configure the other host to redirect to it. The app uses this value for canonical URLs, Open Graph URLs, structured data, and `sitemap.xml`; production should still set it explicitly so every generated URL matches the deployed origin. Verify the domain in Google Search Console using the existing HTML file or `GOOGLE_SITE_VERIFICATION`, open `/robots.txt` and `/sitemap.xml`, and submit the sitemap. Vercel Web Analytics is already included for site traffic and performance; Search Console provides query and indexing reports. Search engines decide when and how pages appear; metadata cannot guarantee rankings.
 
@@ -97,6 +118,19 @@ PostgreSQL.
    instance to reduce connection pressure; use Supabase's Transaction pooler
    rather than a direct database connection. After deployment, verify signup,
    login, product creation, and a sale in the production environment.
+
+## Install DukaSmart
+
+DukaSmart can be installed from a supported browser using the browser's install
+prompt or menu. On iPhone or iPad, open the Share menu in Safari and choose
+**Add to Home Screen**. Installed apps open the shop workspace; signed-out users
+are directed to sign in. Use HTTPS in production for browser installation
+support.
+
+Users can enable or disable push notifications from the app navigation on each
+device. The browser asks for notification permission after the user enables it.
+Daily reminders and low-stock alerts are sent only to active subscriptions; push
+delivery also depends on the user's browser and device notification settings.
 
 Do not run `db/seed.ts` against a production project; it creates demo accounts
 and shop data. Never put production secrets in source control.

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { query } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { deliverPendingLowStockPushes } from "@/lib/push";
+
+export const maxDuration = 60;
 
 // GET /api/products?search=&category=&lowStockOnly=1
 export async function GET(req: NextRequest) {
@@ -86,6 +89,8 @@ export async function POST(req: NextRequest) {
       p.lowStockAt,
     ]
   );
+
+  await deliverPendingLowStockPushes(session.shopId);
 
   return NextResponse.json({ product: result.rows[0] }, { status: 201 });
 }

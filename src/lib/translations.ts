@@ -638,6 +638,23 @@ const sw: Dictionary = {
   "Shop management by business type": "Usimamizi wa duka kulingana na aina ya biashara",
   "DukaSmart Knowledge Hub": "Kituo cha maarifa cha DukaSmart",
   "Estimate gross profit and margin": "Kadiria faida ghafi na kiwango cha faida",
+  "Install DukaSmart": "Sakinisha DukaSmart",
+  "Add DukaSmart to your home screen from your browser menu for quick access.": "Ongeza DukaSmart kwenye skrini ya mwanzo kupitia menyu ya kivinjari ili uifikie haraka.",
+  "On iPhone or iPad, tap Share, then Add to Home Screen. On Android, open the browser menu and choose Install app or Add to Home screen.": "Kwenye iPhone au iPad, gusa Shiriki kisha Ongeza kwenye Skrini ya Mwanzo. Kwenye Android, fungua menyu ya kivinjari na uchague Sakinisha programu au Ongeza kwenye Skrini ya Mwanzo.",
+  "Close": "Funga",
+  "Enable notifications": "Washa arifa",
+  "Notifications on": "Arifa zimewashwa",
+  "Updating notifications…": "Inasasisha arifa…",
+  "Could not check notification status.": "Imeshindikana kuangalia hali ya arifa.",
+  "This browser does not support push notifications.": "Kivinjari hiki hakitumii arifa za moja kwa moja.",
+  "On iPhone or iPad, install DukaSmart to your Home Screen before enabling notifications.": "Kwenye iPhone au iPad, sakinisha DukaSmart kwenye Skrini ya Mwanzo kabla ya kuwasha arifa.",
+  "Push notifications are not configured yet.": "Arifa za moja kwa moja bado hazijawekwa.",
+  "Allow notifications in your browser settings, then try again.": "Ruhusu arifa kwenye mipangilio ya kivinjari kisha ujaribu tena.",
+  "Could not enable notifications. Try again.": "Imeshindikana kuwasha arifa. Jaribu tena.",
+  "Could not disable notifications. Try again.": "Imeshindikana kuzima arifa. Jaribu tena.",
+  "Notifications are enabled on this device.": "Arifa zimewashwa kwenye kifaa hiki.",
+  "Notifications are off on this device.": "Arifa zimezimwa kwenye kifaa hiki.",
+  "Turn off notifications": "Zima arifa",
 };
 
 export function translate(text: string, locale: Locale): string {

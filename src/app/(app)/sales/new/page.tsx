@@ -24,6 +24,7 @@ export default function NewSalePage() {
   const [customerPhone, setCustomerPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [receiptSaleId, setReceiptSaleId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -90,6 +91,7 @@ export default function NewSalePage() {
     setSubmitting(true);
     setError(null);
     setSuccess(null);
+    setReceiptSaleId(null);
 
     const res = await fetch("/api/sales", {
       method: "POST",
@@ -109,7 +111,9 @@ export default function NewSalePage() {
       return;
     }
 
+    const data = await res.json();
     setSuccess(`Sale recorded — total TZS ${formatTZS(total)}`);
+    setReceiptSaleId(data.sale.id);
     setCart([]);
     setCustomerName("");
     setCustomerPhone("");
@@ -254,9 +258,17 @@ export default function NewSalePage() {
               <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
             )}
             {success && (
-              <p className="text-sm text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
-                {success}
-              </p>
+              <div className="text-sm text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
+                <p>{success}</p>
+                {receiptSaleId && (
+                  <a
+                    href={`/api/sales/${receiptSaleId}/receipt`}
+                    className="inline-block mt-2 font-semibold underline underline-offset-2"
+                  >
+                    Download receipt PDF
+                  </a>
+                )}
+              </div>
             )}
 
             <button

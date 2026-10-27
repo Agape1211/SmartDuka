@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { BrandAvatar } from "@/components/BrandAvatar";
+import { InstallAppButton } from "@/components/InstallAppButton";
+import { NotificationPreferences } from "@/components/NotificationPreferences";
 import { LocalizedContent, useLanguage } from "@/components/LanguageProvider";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -85,6 +87,12 @@ export function AppShell({
             </Link>
           ))}
         </nav>
+        <div className="mb-2">
+          <NotificationPreferences />
+        </div>
+        <div className="mb-4">
+          <InstallAppButton />
+        </div>
         <div className="pt-4 border-t border-white/10">
           <p className="text-xs text-teal-100 mb-2">
             {name} · {t(role === "OWNER" ? "Owner" : "Employee")}
@@ -103,6 +111,8 @@ export function AppShell({
 
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex justify-start overflow-x-auto py-2 z-10">
+        <InstallAppButton compact />
+        <NotificationPreferences compact />
         {items.map((item) => (
           <Link
             key={item.href}
