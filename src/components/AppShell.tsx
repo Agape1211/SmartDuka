@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { BrandAvatar } from "@/components/BrandAvatar";
 import { InstallAppButton } from "@/components/InstallAppButton";
-import { NotificationPreferences } from "@/components/NotificationPreferences";
 import { LocalizedContent, useLanguage } from "@/components/LanguageProvider";
 import { usePathname, useRouter } from "next/navigation";
 
-type NavItem = { href: string; label: string; ownerOnly?: boolean };
+type NavItem = { href: string; label: string; ownerOnly?: boolean; icon?: string };
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", ownerOnly: true },
@@ -16,7 +15,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/purchases", label: "Purchases" },
   { href: "/debts", label: "Customer debts", ownerOnly: true },
   { href: "/reports", label: "Reports", ownerOnly: true },
-  { href: "/settings", label: "Settings", ownerOnly: true },
+  { href: "/settings", label: "Settings", icon: "⚙" },
 ];
 
 export function AppShell({
@@ -83,13 +82,11 @@ export function AppShell({
                   : "hover:bg-white/10 text-teal-50"
               }`}
             >
+              {item.icon && <span aria-hidden="true" className="mr-2">{item.icon}</span>}
               {t(item.label)}
             </Link>
           ))}
         </nav>
-        <div className="mb-2">
-          <NotificationPreferences />
-        </div>
         <div className="mb-4">
           <InstallAppButton />
         </div>
@@ -112,7 +109,6 @@ export function AppShell({
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex justify-start overflow-x-auto py-2 z-10">
         <InstallAppButton compact />
-        <NotificationPreferences compact />
         {items.map((item) => (
           <Link
             key={item.href}
@@ -123,6 +119,7 @@ export function AppShell({
                 : "text-slate-500"
             }`}
           >
+            {item.icon && <span aria-hidden="true" className="mr-1">{item.icon}</span>}
             {t(item.label)}
           </Link>
         ))}

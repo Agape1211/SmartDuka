@@ -99,7 +99,7 @@ export default async function Home() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/signup" className="rounded-xl bg-brand px-6 py-3.5 text-center font-semibold text-white shadow-lg shadow-teal-900/15 transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Sign up</Link>
-              <Link href="/features" className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center font-semibold text-slate-700 transition hover:border-brand hover:text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Watch demo</Link>
+              <Link href="/demo" className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center font-semibold text-slate-700 transition hover:border-brand hover:text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Watch demo</Link>
             </div>
             <div className="mt-6 flex flex-wrap gap-2 text-sm text-slate-600">
               <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Sales tracking</span>

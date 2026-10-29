@@ -10,35 +10,29 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
   useSyncExternalStore,
 } from "react";
 import { Locale, translate } from "@/lib/translations";
 
 const STORAGE_KEY = "dukasmart-language";
-const localeListeners = new Set<() => void>();
 
-function subscribeToLocale(listener: () => void) {
-  localeListeners.add(listener);
-  window.addEventListener("storage", listener);
-  return () => {
-    localeListeners.delete(listener);
-    window.removeEventListener("storage", listener);
-  };
+function subscribeToHydration(callback: () => void) {
+  const timeoutId = window.setTimeout(callback, 0);
+  return () => window.clearTimeout(timeoutId);
 }
 
-function getStoredLocale(initialLocale: Locale, hasSavedLocale: boolean): Locale {
-  try {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved === "en" || saved === "sw") return saved;
-  } catch {
-    // Fall back to the server-provided locale when browser storage is unavailable.
-  }
-  if (!hasSavedLocale && navigator.language.toLowerCase().startsWith("sw")) return "sw";
-  return initialLocale;
+function getClientHydrationSnapshot() {
+  return true;
+}
+
+function getServerHydrationSnapshot() {
+  return false;
 }
 
 type LanguageContextValue = {
   locale: Locale;
+  initialT: (text: string) => string;
   setLocale: (locale: Locale) => void;
   t: (text: string) => string;
 };
@@ -53,11 +47,35 @@ export function LanguageProvider({
   initialLocale: Locale;
   hasSavedLocale: boolean;
 }) {
-  const locale = useSyncExternalStore(
-    subscribeToLocale,
-    () => getStoredLocale(initialLocale, hasSavedLocale),
-    () => initialLocale,
-  );
+  const [locale, setLocaleState] = useState(initialLocale);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      let savedLocale: string | null = null;
+      try {
+        savedLocale = window.localStorage.getItem(STORAGE_KEY);
+      } catch {
+        // Fall back to the server-provided locale when browser storage is unavailable.
+      }
+
+      if (savedLocale === "en" || savedLocale === "sw") {
+        setLocaleState(savedLocale);
+      } else if (!hasSavedLocale && navigator.language.toLowerCase().startsWith("sw")) {
+        setLocaleState("sw");
+      }
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [hasSavedLocale]);
+
+  useEffect(() => {
+    function syncLocale(event: StorageEvent) {
+      if (event.key === STORAGE_KEY && (event.newValue === "en" || event.newValue === "sw")) {
+        setLocaleState(event.newValue);
+      }
+    }
+    window.addEventListener("storage", syncLocale);
+    return () => window.removeEventListener("storage", syncLocale);
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = locale === "sw" ? "sw-TZ" : "en-TZ";
@@ -72,11 +90,12 @@ export function LanguageProvider({
     }
     const secure = window.location.protocol === "https:" ? "; Secure" : "";
     document.cookie = `${STORAGE_KEY}=${nextLocale}; Max-Age=31536000; Path=/; SameSite=Lax${secure}`;
-    localeListeners.forEach((listener) => listener());
+    setLocaleState(nextLocale);
   }, []);
 
   const t = useCallback((text: string) => translate(text, locale), [locale]);
-  const value = useMemo(() => ({ locale, setLocale, t }), [locale, setLocale, t]);
+  const initialT = useCallback((text: string) => translate(text, initialLocale), [initialLocale]);
+  const value = useMemo(() => ({ locale, initialT, setLocale, t }), [locale, initialT, setLocale, t]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
@@ -107,8 +126,13 @@ function translateNode(node: ReactNode, t: (text: string) => string): ReactNode 
 }
 
 export function LocalizedContent({ children }: { children: ReactNode }) {
-  const { t } = useLanguage();
-  return <>{translateNode(children, t)}</>;
+  const { initialT, t } = useLanguage();
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration,
+    getClientHydrationSnapshot,
+    getServerHydrationSnapshot,
+  );
+  return <>{translateNode(children, isHydrated ? t : initialT)}</>;
 }
 
 export function LanguageSwitcher() {

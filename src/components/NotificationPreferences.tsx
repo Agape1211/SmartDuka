@@ -27,7 +27,7 @@ function waitForActiveServiceWorker(scope: string, timeoutMessage: string, notRe
   });
 }
 
-export function NotificationPreferences({ compact = false }: { compact?: boolean }) {
+export function NotificationPreferences() {
   const { t, locale } = useLanguage();
   const [enabled, setEnabled] = useState(false);
   const [working, setWorking] = useState(false);
@@ -144,22 +144,18 @@ export function NotificationPreferences({ compact = false }: { compact?: boolean
   }
 
   return (
-    <div className={compact ? "shrink-0" : "space-y-2"}>
+    <div className="space-y-2">
       <button
         type="button"
         disabled={working}
         onClick={enabled ? disableNotifications : enableNotifications}
-        className={compact
-          ? "shrink-0 whitespace-nowrap rounded-lg px-3 py-2 text-[11px] font-medium text-brand hover:bg-teal-50 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-          : "w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-left text-sm text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"}
+        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-sm text-slate-800 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
       >
         <span aria-hidden="true" className="mr-2">{enabled ? "✓" : "🔔"}</span>
         {working ? t("Updating notifications…") : enabled ? t("Turn off notifications") : t("Enable notifications")}
       </button>
       {message && (
-        <p role="status" className={compact
-          ? "fixed bottom-16 left-2 right-2 z-40 rounded-lg bg-slate-900 px-3 py-2 text-xs text-white shadow-lg"
-          : "px-1 text-xs leading-5 text-teal-100"}>
+        <p role="status" className="px-1 text-xs leading-5 text-slate-600">
           {message}
         </p>
       )}
