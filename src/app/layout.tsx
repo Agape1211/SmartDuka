@@ -41,6 +41,8 @@ export const metadata: Metadata = {
   keywords: [
     "SME operations software Tanzania",
     "DukaSmart",
+    "smartduka",
+    "usimazi wa duka",
     "Duka Smart Tanzania",
     "shop management software Tanzania",
     "sales and inventory software Tanzania",
