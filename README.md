@@ -95,6 +95,7 @@ PostgreSQL.
    | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key |
    | `SUPABASE_SECRET_KEY` | Supabase secret key; server-only |
    | `NEXT_PUBLIC_SITE_URL` | Canonical production origin, e.g. `https://dukasmart.online` (no trailing slash) |
+   | `NEXT_PUBLIC_APP_URL` | Production app origin, e.g. `https://app.dukasmart.online` (no trailing slash) |
    | `GOOGLE_SITE_VERIFICATION` | Optional Google Search Console HTML-tag verification value; alternatively, use the existing verification HTML file in `public/` |
    | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Public Web Push application server key |
    | `VAPID_PRIVATE_KEY` | Private Web Push key; server-only secret |
@@ -114,7 +115,7 @@ PostgreSQL.
    a stock change crosses the configured threshold. Configure the public key
    before deployment because Next.js includes it in the browser bundle.
 
-4. **Connect your domain and enable indexing.** Add the purchased domain to the Vercel project and configure the DNS records Vercel provides. Once HTTPS works on the preferred host, set `NEXT_PUBLIC_SITE_URL` to that exact origin (for example `https://dukasmart.online`, without a trailing slash) in Vercel's Production Environment Variables, then redeploy. Use one preferred host and configure the other host to redirect to it. The app uses this value for canonical URLs, Open Graph URLs, structured data, and `sitemap.xml`; production should still set it explicitly so every generated URL matches the deployed origin. Verify the domain in Google Search Console using the existing HTML file or `GOOGLE_SITE_VERIFICATION`, open `/robots.txt` and `/sitemap.xml`, and submit the sitemap. Vercel Web Analytics is already included for site traffic and performance; Search Console provides query and indexing reports. Search engines decide when and how pages appear; metadata cannot guarantee rankings.
+4. **Connect your domains and enable indexing.** Add both `dukasmart.online` and `app.dukasmart.online` to the same Vercel project, then configure the DNS records Vercel provides for each host. Set `NEXT_PUBLIC_SITE_URL` to `https://dukasmart.online` and `NEXT_PUBLIC_APP_URL` to `https://app.dukasmart.online` in Vercel's Production Environment Variables, then redeploy after both domains have HTTPS. Marketing, feature, solution, and blog pages remain canonical to the main domain; sign-in, signup, and authenticated shop routes are served on the app subdomain. Because auth cookies are host-specific, existing users may need to sign in again on the app subdomain. Verify the main domain in Google Search Console using the existing HTML file or `GOOGLE_SITE_VERIFICATION`, open `https://dukasmart.online/robots.txt` and `https://dukasmart.online/sitemap.xml`, and submit the sitemap. Vercel Web Analytics is already included for site traffic and performance; Search Console provides query and indexing reports. Search engines decide when and how pages appear; subdomains and metadata cannot guarantee rankings.
 
 5. **Deploy.** Vercel runs `npm run build` and serves the Next.js app. The
    production database pool is limited to one connection per serverless

@@ -4,6 +4,7 @@ import { MarketingPage } from "@/components/MarketingLayout";
 import type { Article, SearchPage } from "@/lib/seo-content";
 
 import { siteOrigin } from "@/lib/seo";
+import { appUrl } from "@/lib/site-urls";
 
 function StructuredData({ value }: { value: object }) {
   const json = JSON.stringify(value).replace(/</g, "\\u003c");
@@ -78,7 +79,7 @@ export function SearchContentPage({ page, kind }: { page: SearchPage; kind: "fea
           <section className="border-t border-slate-200 pt-8">
             <h2 className="text-2xl font-bold text-slate-950">Put a clearer routine in place</h2>
             <p className="mt-3 leading-7">Set up a DukaSmart shop account to try product, sales, and purchase workflows with your team.</p>
-            <Link href="/signup" className="mt-5 inline-flex rounded-lg bg-brand px-5 py-3 font-semibold text-white hover:bg-brand-dark">Create your shop account</Link>
+            <Link href={appUrl("/signup")} className="mt-5 inline-flex rounded-lg bg-brand px-5 py-3 font-semibold text-white hover:bg-brand-dark">Create your shop account</Link>
           </section>
         </article>
       </MarketingPage>

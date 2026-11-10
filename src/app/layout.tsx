@@ -3,20 +3,20 @@ import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { WhatsAppSupportLink } from "@/components/WhatsAppSupportLink";
+import { siteOrigin } from "@/lib/site-urls";
 import type { Locale } from "@/lib/translations";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "DukaSmart",
-  url: siteUrl,
+  url: siteOrigin,
   sameAs: ["https://www.instagram.com/dukasmart.online/"],
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(siteOrigin),
   title: {
     default: "DukaSmart | Digital Operations for Tanzanian SMEs",
     template: "%s | DukaSmart",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     description:
       "Practical digital implementation, workflow improvement, support, and shop software for Tanzanian SMEs.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "DukaSmart digital operations for Tanzanian SMEs" }],
-    url: siteUrl,
+    url: siteOrigin,
   },
   twitter: {
     card: "summary_large_image",

@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { articles, features, solutions } from "@/lib/seo-content";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
+import { siteOrigin } from "@/lib/site-urls";
 
 const staticPages = [
   { path: "", changeFrequency: "weekly" as const, priority: 1 },
@@ -30,12 +29,12 @@ const staticPages = [
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...staticPages.map(({ path, changeFrequency, priority }) => ({
-      url: new URL(path, siteUrl).toString(),
+      url: new URL(path, siteOrigin).toString(),
       changeFrequency,
       priority,
     })),
     ...articles.map(({ slug, published }) => ({
-      url: new URL(`/blog/${slug}`, siteUrl).toString(),
+      url: new URL(`/blog/${slug}`, siteOrigin).toString(),
       lastModified: published,
       changeFrequency: "monthly" as const,
       priority: 0.6,

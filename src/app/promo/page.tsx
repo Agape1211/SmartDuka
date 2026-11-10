@@ -3,8 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { LocalizedContent } from "@/components/LanguageProvider";
 import { MarketingFooter } from "@/components/MarketingLayout";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
+import { appUrl, siteOrigin } from "@/lib/site-urls";
 
 export const metadata: Metadata = {
   title: "Run Your Shop with Clarity",
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/promo" },
   openGraph: {
     type: "website",
-    url: `${siteUrl}/promo`,
+    url: `${siteOrigin}/promo`,
     title: "Run Your Shop with Clarity | DukaSmart",
     description:
       "Sales, stock, credit, and shop reports in one simple system, built for Tanzanian retailers.",
@@ -86,7 +85,7 @@ export default function PromoPage() {
             <Link href="/" className="flex min-h-12 flex-1 items-center justify-center rounded-xl bg-brand px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
               Visit the website
             </Link>
-            <Link href="/signup" className="flex min-h-12 flex-1 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-brand hover:text-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
+            <Link href={appUrl("/signup")} className="flex min-h-12 flex-1 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-brand hover:text-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
               Create an account
             </Link>
           </div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { appHostname, appOrigin, siteHostname } from "@/lib/site-urls";
 
 // Routes only the Owner role may view.
 const OWNER_ONLY_PREFIXES = ["/dashboard", "/reports", "/debts"];
@@ -12,11 +13,27 @@ const PROTECTED_PREFIXES = [
   "/sales",
   "/purchases",
 ];
+const AUTH_PREFIXES = ["/login", "/signup"];
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
   const isOwnerOnly = OWNER_ONLY_PREFIXES.some((p) => pathname.startsWith(p));
+  const isAuthPage = AUTH_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
+  const isAppRoot = req.nextUrl.hostname === appHostname && pathname === "/";
+
+  if (
+    req.nextUrl.hostname === siteHostname &&
+    (isProtected || isAuthPage)
+  ) {
+    const appUrl = new URL(pathname + req.nextUrl.search, appOrigin);
+    return NextResponse.redirect(appUrl, 308);
+  }
+
+  if (!isProtected && !isAppRoot) return NextResponse.next();
+
   let supabaseResponse = NextResponse.next({ request: req });
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
   const supabaseKey =
@@ -41,10 +58,18 @@ export async function proxy(req: NextRequest) {
   });
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!isProtected) return supabaseResponse;
 
   let redirectUrl: URL | null = null;
-  if (!user) {
+  if (isAppRoot) {
+    redirectUrl = new URL(
+      !user
+        ? "/login"
+        : user.app_metadata.role === "OWNER"
+          ? "/dashboard"
+          : "/sales/new",
+      req.url,
+    );
+  } else if (!user) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("next", pathname);
     redirectUrl = loginUrl;
@@ -63,6 +88,9 @@ export async function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
+    "/login/:path*",
+    "/signup/:path*",
     "/dashboard/:path*",
     "/reports/:path*",
     "/debts/:path*",

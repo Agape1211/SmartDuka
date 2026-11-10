@@ -6,6 +6,7 @@ import {
   LocalizedContent,
   useLanguage,
 } from "@/components/LanguageProvider";
+import { appUrl } from "@/lib/site-urls";
 
 const footerLinks = [
   { href: "/services", label: "Digital operations services" },
@@ -28,8 +29,8 @@ export function MarketingHeader() {
         <BrandAvatar /><span>DukaSmart</span>
       </Link>
       <div className="flex items-center gap-2 sm:gap-3">
-        <Link href="/login" className="rounded-lg px-2 py-2 text-sm font-semibold text-slate-700 hover:text-brand-dark sm:px-3">{t("Sign in")}</Link>
-        <Link href="/signup" className="rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark sm:px-4">{t("Sign up")}</Link>
+        <Link href={appUrl("/login")} className="rounded-lg px-2 py-2 text-sm font-semibold text-slate-700 hover:text-brand-dark sm:px-3">{t("Sign in")}</Link>
+        <Link href={appUrl("/signup")} className="rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark sm:px-4">{t("Sign up")}</Link>
       </div>
     </header>
   );

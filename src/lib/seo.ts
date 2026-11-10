@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { siteOrigin } from "@/lib/site-urls";
 
 const siteName = "DukaSmart";
-export const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
+export { siteOrigin };
 const socialImage = "/opengraph-image";
 
 export function createPageMetadata(

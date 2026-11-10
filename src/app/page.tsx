@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import { appUrl, siteOrigin } from "@/lib/site-urls";
 import { MarketingFooter } from "@/components/MarketingLayout";
 import { BrandAvatar } from "@/components/BrandAvatar";
 import { LanguageSwitcher, LocalizedContent } from "@/components/LanguageProvider";
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const organizationUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dukasmart.online";
+const organizationUrl = siteOrigin;
 const websiteStructuredData = {
   "@context": "https://schema.org",
   "@graph": [
@@ -83,8 +84,8 @@ export default async function Home() {
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
             <LanguageSwitcher />
-            <Link href="/login" className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:text-brand-dark">Sign in</Link>
-            <Link href="/signup" className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Sign up</Link>
+            <Link href={appUrl("/login")} className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:text-brand-dark">Sign in</Link>
+            <Link href={appUrl("/signup")} className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Sign up</Link>
           </div>
         </header>
 
@@ -98,7 +99,7 @@ export default async function Home() {
               DukaSmart gives shop owners a clearer way to record sales, monitor inventory, track purchases and review daily performance from one place.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/signup" className="rounded-xl bg-brand px-6 py-3.5 text-center font-semibold text-white shadow-lg shadow-teal-900/15 transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Sign up</Link>
+              <Link href={appUrl("/signup")} className="rounded-xl bg-brand px-6 py-3.5 text-center font-semibold text-white shadow-lg shadow-teal-900/15 transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Sign up</Link>
               <Link href="/demo" className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center font-semibold text-slate-700 transition hover:border-brand hover:text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Watch demo</Link>
             </div>
             <div className="mt-6 flex flex-wrap gap-2 text-sm text-slate-600">
@@ -262,7 +263,7 @@ export default async function Home() {
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Set up your shop account and start from your next sale.</h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">No long setup. Just create your account, set up your products and begin managing the daily flow of your duka.</p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link href="/signup" className="rounded-xl bg-brand px-6 py-3.5 font-semibold text-white shadow-lg shadow-teal-900/15 transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Sign up</Link>
+              <Link href={appUrl("/signup")} className="rounded-xl bg-brand px-6 py-3.5 font-semibold text-white shadow-lg shadow-teal-900/15 transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">Sign up</Link>
               <Link href="/features" className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 font-semibold text-slate-700 transition hover:border-brand hover:text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">See DukaSmart features</Link>
             </div>
           </div>

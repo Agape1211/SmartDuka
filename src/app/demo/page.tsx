@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingPage } from "@/components/MarketingLayout";
 import { createPageMetadata } from "@/lib/seo";
+import { appUrl } from "@/lib/site-urls";
 
 export const metadata: Metadata = createPageMetadata(
   "Watch the DukaSmart demo",
@@ -57,7 +58,7 @@ export default function DemoPage() {
             Set up your shop and start recording your next sale.
           </p>
           <Link
-            href="/signup"
+            href={appUrl("/signup")}
             className="mt-5 inline-flex rounded-xl bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
           >
             Sign up
