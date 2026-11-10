@@ -22,9 +22,14 @@ export async function proxy(req: NextRequest) {
   const isAuthPage = AUTH_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`),
   );
-  const isAppRoot = req.nextUrl.hostname === appHostname && pathname === "/";
+  const hasSeparateAppHost = appHostname !== siteHostname;
+  const isAppRoot =
+    hasSeparateAppHost &&
+    req.nextUrl.hostname === appHostname &&
+    pathname === "/";
 
   if (
+    hasSeparateAppHost &&
     req.nextUrl.hostname === siteHostname &&
     (isProtected || isAuthPage)
   ) {
