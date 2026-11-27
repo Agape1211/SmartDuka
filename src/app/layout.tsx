@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { WhatsAppSupportLink } from "@/components/WhatsAppSupportLink";
 import { siteOrigin } from "@/lib/site-urls";
-import type { Locale } from "@/lib/translations";
 import "./globals.css";
 
 const organizationJsonLd = {
@@ -89,14 +87,11 @@ export const viewport: Viewport = {
   themeColor: "#0f766e",
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const cookieStore = await cookies();
-  const savedLocale = cookieStore.get("dukasmart-language")?.value;
-  const initialLocale: Locale = savedLocale === "sw" ? "sw" : "en";
-  const hasSavedLocale = savedLocale === "sw" || savedLocale === "en";
-
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  // Keep public routes statically renderable. LanguageProvider restores a
+  // visitor's saved locale from localStorage after hydration.
   return (
-    <html lang={initialLocale === "sw" ? "sw-TZ" : "en-TZ"} className="h-full antialiased">
+    <html lang="en-TZ" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
         <script
           type="application/ld+json"
@@ -104,7 +99,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
           }}
         />
-        <LanguageProvider initialLocale={initialLocale} hasSavedLocale={hasSavedLocale}>
+        <LanguageProvider initialLocale="en" hasSavedLocale={false}>
           {children}
           <WhatsAppSupportLink />
           <Analytics />

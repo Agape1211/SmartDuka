@@ -44,7 +44,7 @@ export default function PromoPage() {
             <div aria-hidden="true" className="absolute -bottom-36 -left-32 -z-10 size-96 rounded-full bg-emerald-300/10 blur-2xl" />
 
             <div className="flex items-center gap-3">
-              <Image src="/dukasmart.png" alt="" width={46} height={46} className="rounded-full ring-2 ring-white/20" />
+              <Image src="/dukasmart.webp" alt="" width={46} height={46} className="rounded-full ring-2 ring-white/20" />
               <div>
                 <p className="text-lg font-bold tracking-tight">DukaSmart</p>
                 <p className="text-xs font-medium text-teal-100">Jua biashara yako</p>
@@ -101,7 +101,7 @@ export default function PromoPage() {
             <video
               controls
               playsInline
-              preload="metadata"
+              preload="none"
               poster="/dukasmart-instagram-reel-poster.png"
               aria-label="DukaSmart vertical promotional video for Instagram"
               className="mx-auto mt-5 max-h-[70vh] w-auto max-w-full rounded-2xl bg-slate-950"
